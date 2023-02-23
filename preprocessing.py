@@ -57,10 +57,31 @@ print(pitchers_all.describe())
 print(hitters_all.columns)
 print(pitchers_all.columns)
 
+# initial export to .csv - no need to run again
 # hitters_all.to_csv('hitters_all.csv')
 # pitchers_all.to_csv('pitchers_all.csv')
 
+# converting percentages to floats
+hitters_all['BB%_x'] = hitters_all['BB%_x'].str.rstrip("%").astype(float)/100
+hitters_all['K%_x'] = hitters_all['K%_x'].str.rstrip("%").astype(float)/100
+hitters_all['LD%_x'] = hitters_all['LD%_x'].str.rstrip("%").astype(float)/100
+hitters_all['GB%_x'] = hitters_all['GB%_x'].str.rstrip("%").astype(float)/100
+hitters_all['FB%_x'] = hitters_all['FB%_x'].str.rstrip("%").astype(float)/100
+hitters_all['HR/FB_x'] = hitters_all['HR/FB_x'].str.rstrip("%").astype(float)/100
+hitters_all['O-Swing%_x'] = hitters_all['O-Swing%_x'].str.rstrip("%").astype(float)/100
+hitters_all['Z-Swing%_x'] = hitters_all['Z-Swing%_x'].str.rstrip("%").astype(float)/100
+hitters_all['O-Contact%_x'] = hitters_all['O-Contact%_x'].str.rstrip("%").astype(float)/100
+hitters_all['Z-Contact%_x'] = hitters_all['Z-Contact%_x'].str.rstrip("%").astype(float)/100
+hitters_all['SwStr%_x'] = hitters_all['SwStr%_x'].str.rstrip("%").astype(float)/100
+hitters_all['Pull%_x'] = hitters_all['Pull%_x'].str.rstrip("%").astype(float)/100
+hitters_all['Cent%_x'] = hitters_all['Cent%_x'].str.rstrip("%").astype(float)/100
+hitters_all['Oppo%_x'] = hitters_all['Oppo%_x'].str.rstrip("%").astype(float)/100
+hitters_all['Soft%_x'] = hitters_all['Soft%_x'].str.rstrip("%").astype(float)/100
+hitters_all['Med%_x'] = hitters_all['Med%_x'].str.rstrip("%").astype(float)/100
+hitters_all['Hard%_x'] = hitters_all['Hard%_x'].str.rstrip("%").astype(float)/100
 hitters_all['Barrel%_x'] = hitters_all['Barrel%_x'].str.rstrip("%").astype(float)/100
+hitters_all['HardHit%_x'] = hitters_all['HardHit%_x'].str.rstrip("%").astype(float)/100
+hitters_all['CSW%_x'] = hitters_all['CSW%_x'].str.rstrip("%").astype(float)/100
 
 # Visualizations
 
