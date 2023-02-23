@@ -57,9 +57,11 @@ print(pitchers_all.describe())
 print(hitters_all.columns)
 print(pitchers_all.columns)
 
-# initial export to .csv - no need to run again
-# hitters_all.to_csv('hitters_all.csv')
-# pitchers_all.to_csv('pitchers_all.csv')
+# drop unnecessary columns
+hitters_all = hitters_all.drop(hitters_all.loc[:, 'Name_y':'3B_y'].columns,axis = 1)
+hitters_all = hitters_all.drop(hitters_all.loc[:, 'BB_y':'GDP_y'].columns,axis = 1)
+hitters_all = hitters_all.drop(hitters_all.loc[:, 'CS_y':'CS_y'].columns,axis = 1)
+hitters_all = hitters_all.drop(hitters_all.loc[:, 'BB%_y':'xwOBA_y'].columns,axis = 1)
 
 # converting percentages to floats
 hitters_all['BB%_x'] = hitters_all['BB%_x'].str.rstrip("%").astype(float)/100
@@ -83,11 +85,13 @@ hitters_all['Barrel%_x'] = hitters_all['Barrel%_x'].str.rstrip("%").astype(float
 hitters_all['HardHit%_x'] = hitters_all['HardHit%_x'].str.rstrip("%").astype(float)/100
 hitters_all['CSW%_x'] = hitters_all['CSW%_x'].str.rstrip("%").astype(float)/100
 
+# TO-DO: need to do the same for pitcher data
+
 # Visualizations
 
 sns.set_style('whitegrid')
 
-# is Barrel% more predictive of HR_y than HRs
+# is Barrel% more predictive of HR_y than HR_x?
 sns.lmplot(x ='Barrel%_x', y ='HR_y', data = hitters_all)
 sns.lmplot(x ='HR_x', y ='HR_y', data = hitters_all)
 plt.show()
@@ -95,3 +99,7 @@ plt.show()
 # Seaborn heatmaps are broken, will try something else
 # sns.heatmap(data=hitters_all['HR_x', 'SLG_x', 'ISO_x', 'EV_x', 'LA_x', 'maxEV_x', 'Barrel%_x', 'xSLG_x', 'HR_y'])
 # plt.show()
+
+# export updated .csv files at the end of script
+hitters_all.to_csv('hitters_all.csv')
+pitchers_all.to_csv('pitchers_all.csv')
