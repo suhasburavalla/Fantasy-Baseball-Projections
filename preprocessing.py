@@ -87,6 +87,7 @@ hitters_all['CSW%_x'] = hitters_all['CSW%_x'].str.rstrip("%").astype(float)/100
 
 sns.set_style('whitegrid')
 
+# is Barrel% more predictive of HR_y than HRs
 sns.lmplot(x ='Barrel%_x', y ='HR_y', data = hitters_all)
 sns.lmplot(x ='HR_x', y ='HR_y', data = hitters_all)
 plt.show()
