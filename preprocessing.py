@@ -70,5 +70,6 @@ sns.lmplot(x ='Barrel%_x', y ='HR_y', data = hitters_all)
 sns.lmplot(x ='HR_x', y ='HR_y', data = hitters_all)
 plt.show()
 
+# Seaborn heatmaps are broken, will try something else
 # sns.heatmap(data=hitters_all['HR_x', 'SLG_x', 'ISO_x', 'EV_x', 'LA_x', 'maxEV_x', 'Barrel%_x', 'xSLG_x', 'HR_y'])
 # plt.show()
