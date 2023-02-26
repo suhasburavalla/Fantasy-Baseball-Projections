@@ -85,7 +85,51 @@ hitters_all['Barrel%_x'] = hitters_all['Barrel%_x'].str.rstrip("%").astype(float
 hitters_all['HardHit%_x'] = hitters_all['HardHit%_x'].str.rstrip("%").astype(float)/100
 hitters_all['CSW%_x'] = hitters_all['CSW%_x'].str.rstrip("%").astype(float)/100
 
-# TO-DO: need to do the same for pitcher data
+# drop unnecessary columns (pitcher data)
+
+pitchers_all = pitchers_all.drop(pitchers_all.loc[:, 'Name_y':'Age_y'].columns,axis = 1)
+pitchers_all = pitchers_all.drop(pitchers_all.loc[:, 'L_y':'L_y'].columns,axis = 1)
+pitchers_all = pitchers_all.drop(pitchers_all.loc[:, 'G_y':'GS_y'].columns,axis = 1)
+pitchers_all = pitchers_all.drop(pitchers_all.loc[:, 'BS_y':'BK_y'].columns,axis = 1)
+pitchers_all = pitchers_all.drop(pitchers_all.loc[:, 'GB_y':'AVG_y'].columns,axis = 1)
+pitchers_all = pitchers_all.drop(pitchers_all.loc[:, 'BABIP_y':'xERA_y'].columns,axis = 1)
+
+# converting percentages to floats (pitcher data)
+
+pitchers_all['LOB%_x'] = pitchers_all['LOB%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['LD%_x'] = pitchers_all['LD%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['GB%_x'] = pitchers_all['GB%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['FB%_x'] = pitchers_all['FB%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['IFFB%_x'] = pitchers_all['IFFB%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['HR/FB_x'] = pitchers_all['HR/FB_x'].str.rstrip("%").astype(float)/100
+pitchers_all['FB%.1_x'] = pitchers_all['FB%.1_x'].str.rstrip("%").astype(float)/100
+pitchers_all['SL%_x'] = pitchers_all['SL%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['CT%_x'] = pitchers_all['CT%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['CB%_x'] = pitchers_all['CB%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['CH%_x'] = pitchers_all['CH%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['SF%_x'] = pitchers_all['SF%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['KN%_x'] = pitchers_all['KN%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['O-Swing%_x'] = pitchers_all['O-Swing%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['Z-Swing%_x'] = pitchers_all['Z-Swing%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['Swing%_x'] = pitchers_all['Swing%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['O-Contact%_x'] = pitchers_all['O-Contact%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['Z-Contact%_x'] = pitchers_all['Z-Contact%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['Contact%_x'] = pitchers_all['Contact%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['Zone%_x'] = pitchers_all['Zone%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['F-Strike%_x'] = pitchers_all['F-Strike%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['SwStr%_x'] = pitchers_all['SwStr%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['K%_x'] = pitchers_all['K%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['BB%_x'] = pitchers_all['BB%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['K-BB%_x'] = pitchers_all['K-BB%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['Pull%_x'] = pitchers_all['Pull%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['Cent%_x'] = pitchers_all['Cent%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['Oppo%_x'] = pitchers_all['Oppo%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['Soft%_x'] = pitchers_all['Soft%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['Med%_x'] = pitchers_all['Med%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['Hard%_x'] = pitchers_all['Hard%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['Barrel%_x'] = pitchers_all['Barrel%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['HardHit%_x'] = pitchers_all['HardHit%_x'].str.rstrip("%").astype(float)/100
+pitchers_all['CSW%_x'] = pitchers_all['CSW%_x'].str.rstrip("%").astype(float)/100
 
 # Visualizations
 
