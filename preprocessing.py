@@ -133,6 +133,8 @@ pitchers_all['CSW%_x'] = pitchers_all['CSW%_x'].str.rstrip("%").astype(float)/10
 
 # Visualizations
 
+# IN PROGRESS (for first stand-up meeting)
+
 sns.set_style('whitegrid')
 
 # is Barrel% more predictive of HR_y than HR_x?
@@ -143,6 +145,14 @@ plt.show()
 # Seaborn heatmaps are broken, will try something else
 # sns.heatmap(data=hitters_all['HR_x', 'SLG_x', 'ISO_x', 'EV_x', 'LA_x', 'maxEV_x', 'Barrel%_x', 'xSLG_x', 'HR_y'])
 # plt.show()
+
+
+
+
+
+
+
+
 
 # export updated .csv files at the end of script
 hitters_all.to_csv('hitters_all.csv')
