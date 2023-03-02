@@ -70,6 +70,7 @@ hitters_all['LD%_x'] = hitters_all['LD%_x'].str.rstrip("%").astype(float)/100
 hitters_all['GB%_x'] = hitters_all['GB%_x'].str.rstrip("%").astype(float)/100
 hitters_all['FB%_x'] = hitters_all['FB%_x'].str.rstrip("%").astype(float)/100
 hitters_all['HR/FB_x'] = hitters_all['HR/FB_x'].str.rstrip("%").astype(float)/100
+hitters_all['Swing%_x'] = hitters_all['Swing%_x'].str.rstrip("%").astype(float)/100
 hitters_all['O-Swing%_x'] = hitters_all['O-Swing%_x'].str.rstrip("%").astype(float)/100
 hitters_all['Z-Swing%_x'] = hitters_all['Z-Swing%_x'].str.rstrip("%").astype(float)/100
 hitters_all['O-Contact%_x'] = hitters_all['O-Contact%_x'].str.rstrip("%").astype(float)/100
@@ -138,14 +139,42 @@ pitchers_all['CSW%_x'] = pitchers_all['CSW%_x'].str.rstrip("%").astype(float)/10
 sns.set_style('whitegrid')
 
 # is Barrel% more predictive of HR_y than HR_x?
-sns.lmplot(x ='Barrel%_x', y ='HR_y', data = hitters_all)
-sns.lmplot(x ='HR_x', y ='HR_y', data = hitters_all)
-plt.show()
+# sns.lmplot(x ='Barrel%_x', y ='HR_y', data = hitters_all)
+# sns.lmplot(x ='HR_x', y ='HR_y', data = hitters_all)
+# plt.show()
 
 # Seaborn heatmaps are broken, will try something else
 # sns.heatmap(data=hitters_all['HR_x', 'SLG_x', 'ISO_x', 'EV_x', 'LA_x', 'maxEV_x', 'Barrel%_x', 'xSLG_x', 'HR_y'])
 # plt.show()
 
+# PCR
+
+from sklearn.decomposition import PCA
+from sklearn.pipeline import Pipeline
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+
+X = hitters_all.iloc[:, 2:56].values
+y = hitters_all.iloc[:, 58].values #use HR_y as target; can add additional PCR analysis for the other 4 targets
+print(X.shape)
+
+PCA = PCA(n_components=4)
+
+Regression = LinearRegression()
+Pipeline = Pipeline(steps=[('pca', PCA), ('reg', Regression)])
+Pipeline.fit(X, y)
+
+#predict labels
+y_pred = Pipeline.predict(X)
+
+#metrics
+mse = mean_squared_error(y, y_pred)
+rmse = np.sqrt(mse)
+r2 = Pipeline.score(X, y)
+
+print(f'MSE: {mse:.2f}')
+print(f'RMSE: {rmse:.2f}')
+print(f'R-Squared: {r2:.2f}')
 
 
 
