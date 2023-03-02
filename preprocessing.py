@@ -155,26 +155,30 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 
 X = hitters_all.iloc[:, 2:56].values
-y = hitters_all.iloc[:, 58].values #use HR_y as target; can add additional PCR analysis for the other 4 targets
-print(X.shape)
 
-PCA = PCA(n_components=4)
+print("PCR Analysis: Hitters\n")
 
-Regression = LinearRegression()
-Pipeline = Pipeline(steps=[('pca', PCA), ('reg', Regression)])
-Pipeline.fit(X, y)
+for i in range(0, 4):
+    y = hitters_all.iloc[:, 58+i].values #iterate through targets for hitters in order: HR, R, RBI, SB, AVG
+    print(X.shape)
 
-#predict labels
-y_pred = Pipeline.predict(X)
+    pca = PCA(n_components=4)
 
-#metrics
-mse = mean_squared_error(y, y_pred)
-rmse = np.sqrt(mse)
-r2 = Pipeline.score(X, y)
+    Regression = LinearRegression()
+    Pipeline = Pipeline(steps=[('pca', pca), ('reg', Regression)])
+    Pipeline.fit(X, y)
 
-print(f'MSE: {mse:.2f}')
-print(f'RMSE: {rmse:.2f}')
-print(f'R-Squared: {r2:.2f}')
+    #predict labels
+    y_pred = Pipeline.predict(X)
+
+    #metrics
+    mse = mean_squared_error(y, y_pred)
+    rmse = np.sqrt(mse)
+    r2 = Pipeline.score(X, y)
+
+    print(f'MSE: {mse:.2f}')
+    print(f'RMSE: {rmse:.2f}')
+    print(f'R-Squared: {r2:.2f}')
 
 
 
