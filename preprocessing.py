@@ -155,17 +155,18 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 
 X = hitters_all.iloc[:, 2:56].values
+print(X.shape)
 
 print("PCR Analysis: Hitters\n")
 
-for i in range(0, 4):
-    y = hitters_all.iloc[:, 58+i].values #iterate through targets for hitters in order: HR, R, RBI, SB, AVG
-    print(X.shape)
+pca = PCA(n_components=4)
+reg = LinearRegression()
+Pipeline = Pipeline(steps=[('pca', pca), ('reg', reg)])
 
-    pca = PCA(n_components=4)
+for i in range(0,5): #iterate through hitter targets in order: HR, R, RBI, SB, AVG
 
-    Regression = LinearRegression()
-    Pipeline = Pipeline(steps=[('pca', pca), ('reg', Regression)])
+    y = hitters_all.iloc[:, 58+i].values
+
     Pipeline.fit(X, y)
 
     #predict labels
