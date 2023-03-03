@@ -27,8 +27,8 @@ hitters_21_22 = hitters_21.merge(hitters_22, on='playerid', how='inner')
 # combine into one df
 
 hitters_all = pd.concat([hitters_15_16, hitters_16_17, hitters_17_18, hitters_18_19, hitters_21_22])
-print(hitters_all.head(5))
-print(hitters_all.describe())
+# print(hitters_all.head(5))
+# print(hitters_all.describe())
 
 # reading in pitcher (SP and RP) data from Fangraphs custom exports
 
@@ -54,8 +54,8 @@ pitchers_all = pd.concat([pitchers_15_16, pitchers_16_17, pitchers_17_18, pitche
 print(pitchers_all.head(5))
 print(pitchers_all.describe())
 
-print(hitters_all.columns)
-print(pitchers_all.columns)
+# print(hitters_all.columns)
+# print(pitchers_all.columns)
 
 # drop unnecessary columns
 hitters_all = hitters_all.drop(hitters_all.loc[:, 'Name_y':'3B_y'].columns,axis = 1)
@@ -132,6 +132,7 @@ pitchers_all['Barrel%_x'] = pitchers_all['Barrel%_x'].str.rstrip("%").astype(flo
 pitchers_all['HardHit%_x'] = pitchers_all['HardHit%_x'].str.rstrip("%").astype(float)/100
 pitchers_all['CSW%_x'] = pitchers_all['CSW%_x'].str.rstrip("%").astype(float)/100
 
+print(pitchers_all.info())
 # Visualizations
 
 # IN PROGRESS (for first stand-up meeting)
@@ -154,25 +155,45 @@ from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 
-X = hitters_all.iloc[:, 2:56].values
+X = pitchers_all.iloc[:, 3:76].values
 print(X.shape)
 
-print("PCR Analysis: Hitters\n")
+# print("PCR Analysis: Hitters\n")
 
+# pca = PCA(n_components=4)
+# reg = LinearRegression()
+# Pipeline = Pipeline(steps=[('pca', pca), ('reg', reg)])
+
+# for i in range(0,5): #iterate through hitter targets in order: HR, R, RBI, SB, AVG
+
+#     y = hitters_all.iloc[:, 58+i].values
+
+#     Pipeline.fit(X, y)
+
+#     #predict labels
+#     y_pred = Pipeline.predict(X)
+
+#     #metrics
+#     mse = mean_squared_error(y, y_pred)
+#     rmse = np.sqrt(mse)
+#     r2 = Pipeline.score(X, y)
+
+#     print(f'MSE: {mse:.2f}')
+#     print(f'RMSE: {rmse:.2f}')
+#     print(f'R-Squared: {r2:.2f}')
+
+
+print("PCR Analysis: Pitchers\n")
 pca = PCA(n_components=4)
 reg = LinearRegression()
 Pipeline = Pipeline(steps=[('pca', pca), ('reg', reg)])
-
-for i in range(0,5): #iterate through hitter targets in order: HR, R, RBI, SB, AVG
-
-    y = hitters_all.iloc[:, 58+i].values
-
+for i in range(0,5): #iterate through pitcher targets in order: W, SV, SO, ERA, WHIP
+    y = pitchers_all.iloc[:, 78+i].values
+    
     Pipeline.fit(X, y)
-
-    #predict labels
+    
     y_pred = Pipeline.predict(X)
-
-    #metrics
+    
     mse = mean_squared_error(y, y_pred)
     rmse = np.sqrt(mse)
     r2 = Pipeline.score(X, y)
@@ -180,8 +201,7 @@ for i in range(0,5): #iterate through hitter targets in order: HR, R, RBI, SB, A
     print(f'MSE: {mse:.2f}')
     print(f'RMSE: {rmse:.2f}')
     print(f'R-Squared: {r2:.2f}')
-
-
+    
 
 
 
