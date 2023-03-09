@@ -28,7 +28,7 @@ def hitters_data_read():
     hitters_18_19 = hitters_18.merge(hitters_19, on='playerid', how='inner')
     hitters_21_22 = hitters_21.merge(hitters_22, on='playerid', how='inner')
 
-    # combine into one df
+    # combine into one hitters_all
 
     hitters_all = pd.concat([hitters_15_16, hitters_16_17, hitters_17_18, hitters_18_19, hitters_21_22])
     # print(hitters_all.head(5))
@@ -53,7 +53,7 @@ def pitchers_data_read():
     pitchers_18_19 = pitchers_18.merge(pitchers_19, on='playerid', how='inner')
     pitchers_21_22 = pitchers_21.merge(pitchers_22, on='playerid', how='inner')
 
-    # combine into one df
+    # combine into one hitters_all
 
     pitchers_all = pd.concat([pitchers_15_16, pitchers_16_17, pitchers_17_18, pitchers_18_19, pitchers_21_22])
     print(pitchers_all.head(5))
@@ -221,11 +221,51 @@ def pcr_pitchers(pitchers_all, Pipeline, LinearRegression, PCA, mean_squared_err
         print(f'MSE: {mse:.2f}')
         print(f'RMSE: {rmse:.2f}')
         print(f'R-Squared: {r2:.2f}')
+        #plot heatmap of PCA components
+        
         
 
+def hitters_visualization(hitters_all, plt, sns) : 
+    # plot seaborn heatmap for all targets of hitters_all
+    
+    corr_matrix = hitters_all.corr()
+    
+    
+    print(corr_matrix["AVG_y"].sort_values(ascending=False))
+    
+    # plt.matshow(hitters_all.corr())
+    # plt.show()
+    f = plt.figure(figsize=(20, 10))
+    plt.matshow(hitters_all.corr(), fignum=f.number)
+    plt.xticks(range(hitters_all.select_dtypes(['number']).shape[1]), hitters_all.select_dtypes(['number']).columns, fontsize=14, rotation=45)
+    plt.yticks(range(hitters_all.select_dtypes(['number']).shape[1]), hitters_all.select_dtypes(['number']).columns, fontsize=14)
+    cb = plt.colorbar()
+    cb.ax.tick_params(labelsize=14)
+    plt.title('Correlation Matrix', fontsize=16)
+    plt.show()
 
+    # sns.heatmap(corr_matrix, annot=True)
+    # plt.show()
 
+def pitchers_visualization(pitchers_all, plt, sns) : 
+    # plot seaborn heatmap for all targets of hitters_all
+    
+    corr_matrix = pitchers_all.corr()
+    print(corr_matrix["WHIP_y"].sort_values(ascending=False))
+    
+    # plt.matshow(hitters_all.corr())
+    # plt.show()
+    f = plt.figure(figsize=(20,10))
+    plt.matshow(pitchers_all.corr(), fignum=f.number)
+    plt.xticks(range(pitchers_all.select_dtypes(['number']).shape[1]), pitchers_all.select_dtypes(['number']).columns, fontsize=14, rotation=45)
+    plt.yticks(range(pitchers_all.select_dtypes(['number']).shape[1]), pitchers_all.select_dtypes(['number']).columns, fontsize=14)
+    cb = plt.colorbar()
+    cb.ax.tick_params(labelsize=14)
+    plt.title('Correlation Matrix', fontsize=16)
+    plt.show()
 
+    # sns.heatmap(corr_matrix, annot=True)
+    # plt.show()
 
 
 # # export updated .csv files at the end of script
@@ -240,3 +280,5 @@ if __name__ == "__main__" :
     pitchers_all = pitchers_preprocessing(pitchers_all)
     pcr_hitters(hitters_all, Pipeline, LinearRegression, PCA, mean_squared_error, np)
     pcr_pitchers(pitchers_all, Pipeline, LinearRegression, PCA, mean_squared_error, np)
+    # hitters_visualization(hitters_all, plt, sns)
+    pitchers_visualization(pitchers_all, plt, sns)
