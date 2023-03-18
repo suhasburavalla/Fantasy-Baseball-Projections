@@ -8,7 +8,9 @@ from sklearn.preprocessing import scale
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LinearRegression
 from sklearn import model_selection
+from sklearn.model_selection import cross_val_score
 from sklearn.metrics import mean_squared_error
+from sklearn.tree import DecisionTreeRegressor
 from sklearn.model_selection import RepeatedKFold
 matplotlib.use('TkAgg')
 
@@ -287,7 +289,7 @@ def pcr_hitters_normalized(hitters_all, LinearRegression, PCA, np):
     for i in range(0,5): #iterate through hitter targets in order: HR, R, RBI, SB, AVG
 
         y = hitters_all.iloc[:, 58+i].values
-        cv = RepeatedKFold(n_splits=10, n_repeats=3, random_state=1)
+        cv = RepeatedKFold(n_splits=20, n_repeats=5, random_state=1)
         reg = LinearRegression()
         mse = []
         score = -1 * model_selection.cross_val_score(reg, np.ones((len(X_scaled), 1)), y, cv=cv, scoring='neg_mean_squared_error').mean()
@@ -303,6 +305,42 @@ def pcr_hitters_normalized(hitters_all, LinearRegression, PCA, np):
         plt.ylabel('MSE')
         plt.show()
 
+def pcr_pitchers_normalized(pitchers_all, LinearRegression, PCA, np):
+
+    print("PCR Analysis with Normalization: Pitchers\n")
+
+    X = pitchers_all.iloc[:, 3:76].values
+
+    pca = PCA()
+    X_scaled = pca.fit_transform(scale(X))
+
+    for i in range(0,5): #iterate through hitter targets in order: HR, R, RBI, SB, AVG
+
+        y = pitchers_all.iloc[:, 78+i].values
+        cv = RepeatedKFold(n_splits=20, n_repeats=5, random_state=1)
+        reg = LinearRegression()
+        mse = []
+        score = -1 * model_selection.cross_val_score(reg, np.ones((len(X_scaled), 1)), y, cv=cv, scoring='neg_mean_squared_error').mean()
+        mse.append(score)
+
+        for i in np.arange(1, 6):
+            score = -1 * model_selection.cross_val_score(reg, X_scaled[:, :i], y, cv=cv, scoring='neg_mean_squared_error').mean()
+            mse.append(score)
+
+        # Plot cross-validation results
+        plt.plot(mse)
+        plt.xlabel('Number of Principal Components')
+        plt.ylabel('MSE')
+        plt.show()
+
+def rf_hitters(hitters_all):
+
+    X = hitters_all.iloc[:, 2:56].values
+    y = hitters_all.iloc[:, 58:62].values
+
+    regressor = DecisionTreeRegressor(random_state=0, max_features='sqrt')
+    cross_val_score(regressor, X, y, cv=10)
+
 if __name__ == "__main__" :
     hitters_all = hitters_data_read()
     pitchers_all = pitchers_data_read()
@@ -310,6 +348,8 @@ if __name__ == "__main__" :
     pitchers_all = pitchers_preprocessing(pitchers_all)
     pcr_hitters(hitters_all, Pipeline, LinearRegression, PCA, mean_squared_error, np)
     pcr_pitchers(pitchers_all, Pipeline, LinearRegression, PCA, mean_squared_error, np)
-    pcr_hitters_normalized(hitters_all, LinearRegression, PCA, np)
+    # pcr_hitters_normalized(hitters_all, LinearRegression, PCA, np)
+    # pcr_pitchers_normalized(pitchers_all, LinearRegression, PCA, np)
+    rf_hitters(hitters_all)
     # hitters_visualization(hitters_all, plt, sns)
     # pitchers_visualization(pitchers_all, plt, sns)
