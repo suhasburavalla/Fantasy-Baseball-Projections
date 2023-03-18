@@ -11,6 +11,7 @@ from sklearn import model_selection
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import mean_squared_error
 from sklearn.tree import DecisionTreeRegressor
+from sklearn.model_selection import train_test_split
 from sklearn.model_selection import RepeatedKFold
 matplotlib.use('TkAgg')
 
@@ -338,8 +339,10 @@ def rf_hitters(hitters_all):
     X = hitters_all.iloc[:, 2:56].values
     y = hitters_all.iloc[:, 58:62].values
 
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state = 42, shuffle=True)
+
     regressor = DecisionTreeRegressor(random_state=0, max_features='sqrt')
-    cross_val_score(regressor, X, y, cv=10)
+    cross_val_score(regressor, X_train, y_train, cv=10)
 
 if __name__ == "__main__" :
     hitters_all = hitters_data_read()
