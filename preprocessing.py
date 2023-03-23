@@ -337,36 +337,121 @@ def pcr_pitchers_normalized(pitchers_all, LinearRegression, PCA, np):
         plt.show()
 
 def rf_hitters(hitters_all):
+    
+    print("\n Random Forest Analysis: Hitters\n")
 
     X = hitters_all.iloc[:, 2:56].values
     y = hitters_all.iloc[:, 58:62].values
+    col_names = hitters_all.columns[2:56].tolist()
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state = 42, shuffle=True)
 
     regressor = DecisionTreeRegressor(random_state=0, max_features='sqrt')
+    regressor.fit(X_train, y_train)
     print("10-fold CV score, RF model for Hitters:")
     print(cross_val_score(regressor, X_train, y_train, cv=10))
+    
+    # Get feature importances
+    importances = regressor.feature_importances_
+
+ 
+    feature_dict = {i: col_names[i] for i in range(len(col_names))}
+    # features = ["Feature " + str(i) for i in range(X.shape[1])]
+    
+    # Sort feature importances in descending order
+    indices = np.argsort(importances)[::-1]
+
+    # Rearrange feature names so they match the sorted feature importances
+    # sorted_features = []
+  
+    # for i in indices:
+    #     sorted_features.append(feature_dict[i])
+
+    # Plot the feature importances
+    # plt.figure(figsize=(10,5))
+    # plt.title("Feature Importance - Hitters")
+    # plt.bar(sorted_features, importances[indices])
+    # plt.xticks(rotation=90)
+    # print(feature_dict)
+    # plt.show()
+    
+    # Get the top 10 important features
+    top_k = 10
+    sorted_features = [feature_dict[i] for i in indices[:top_k]]
+
+    # Get the importances for the top k features
+    importances_top_k = importances[indices][:top_k]
+
+    # Plot the feature importances
+    plt.figure(figsize=(10,5))
+    plt.title("Feature Importance - Hitters")
+    plt.bar(sorted_features, importances_top_k)
+    plt.xticks(rotation=90)
+    plt.show()
 
 def rf_pitchers(pitchers_all):
 
+    print("\n Random Forest Analysis: Pitchers\n")
     X = pitchers_all.iloc[:, 3:76].values
     y = pitchers_all.iloc[:, 78:82].values
+    col_names = pitchers_all.columns[3:76].tolist()
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state = 42, shuffle=True)
 
     regressor = DecisionTreeRegressor(random_state=0, max_features='sqrt')
+    regressor.fit(X_train, y_train)
     print("10-fold CV score, RF model for Pitchers:")
     print(cross_val_score(regressor, X_train, y_train, cv=10))
+    
+    # Get feature importances
+    importances = regressor.feature_importances_
+
+ 
+    feature_dict = {i: col_names[i] for i in range(len(col_names))}
+    # features = ["Feature " + str(i) for i in range(X.shape[1])]
+    
+    # Sort feature importances in descending order
+    indices = np.argsort(importances)[::-1]
+
+    # Rearrange feature names so they match the sorted feature importances
+    # sorted_features = []
+  
+    # for i in indices:
+    #     sorted_features.append(feature_dict[i])
+
+    # Plot the feature importances
+    # plt.figure(figsize=(10,5))
+    # plt.title("Feature Importance - Pitchers")
+    # plt.bar(sorted_features, importances[indices])
+    # plt.xticks(rotation=90)
+    # print(feature_dict)
+    # plt.show()
+    
+    # Get the top 10 important features
+    top_k = 10
+    sorted_features = [feature_dict[i] for i in indices[:top_k]]
+
+    # Get the importances for the top k features
+    importances_top_k = importances[indices][:top_k]
+
+    # Plot the feature importances
+    plt.figure(figsize=(10,5))
+    plt.title("Feature Importance - Pitchers")
+    plt.bar(sorted_features, importances_top_k)
+    plt.xticks(rotation=90)
+    plt.show()
+   
+    
 
 if __name__ == "__main__" :
     hitters_all = hitters_data_read()
     pitchers_all = pitchers_data_read()
     hitters_all = hitters_preprocessing(hitters_all)
     pitchers_all = pitchers_preprocessing(pitchers_all)
-    pcr_hitters(hitters_all, Pipeline, LinearRegression, PCA, mean_squared_error, np)
-    pcr_pitchers(pitchers_all, Pipeline, LinearRegression, PCA, mean_squared_error, np)
-    # pcr_hitters_normalized(hitters_all, LinearRegression, PCA, np)
-    # pcr_pitchers_normalized(pitchers_all, LinearRegression, PCA, np)
+    # pcr_hitters(hitters_all, Pipeline, LinearRegression, PCA, mean_squared_error, np)
+    # pcr_pitchers(pitchers_all, Pipeline, LinearRegression, PCA, mean_squared_error, np)
+    pcr_hitters_normalized(hitters_all, LinearRegression, PCA, np)
+    pcr_pitchers_normalized(pitchers_all, LinearRegression, PCA, np)
     rf_hitters(hitters_all)
     rf_pitchers(pitchers_all)
     # hitters_visualization(hitters_all, plt, sns)
