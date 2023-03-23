@@ -285,9 +285,10 @@ def pcr_hitters_normalized(hitters_all, LinearRegression, PCA, np):
     X = hitters_all.iloc[:, 2:56].values
 
     pca = PCA()
-    X_scaled = pca.fit_transform(scale(X))
 
     for i in range(0,5): #iterate through hitter targets in order: HR, R, RBI, SB, AVG
+
+        X_scaled = pca.fit_transform(scale(X))
 
         y = hitters_all.iloc[:, 58+i].values
         cv = RepeatedKFold(n_splits=20, n_repeats=5, random_state=1)
@@ -313,9 +314,10 @@ def pcr_pitchers_normalized(pitchers_all, LinearRegression, PCA, np):
     X = pitchers_all.iloc[:, 3:76].values
 
     pca = PCA()
-    X_scaled = pca.fit_transform(scale(X))
 
     for i in range(0,5): #iterate through hitter targets in order: HR, R, RBI, SB, AVG
+
+        X_scaled = pca.fit_transform(scale(X))
 
         y = pitchers_all.iloc[:, 78+i].values
         cv = RepeatedKFold(n_splits=20, n_repeats=5, random_state=1)
