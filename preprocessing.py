@@ -344,6 +344,16 @@ def rf_hitters(hitters_all):
     regressor = DecisionTreeRegressor(random_state=0, max_features='sqrt')
     cross_val_score(regressor, X_train, y_train, cv=10)
 
+def rf_pitchers(pitchers_all):
+
+    X = pitchers_all.iloc[:, 3:76].values
+    y = pitchers_all.iloc[:, 78:82].values
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state = 42, shuffle=True)
+
+    regressor = DecisionTreeRegressor(random_state=0, max_features='sqrt')
+    cross_val_score(regressor, X_train, y_train, cv=10)
+
 if __name__ == "__main__" :
     hitters_all = hitters_data_read()
     pitchers_all = pitchers_data_read()
@@ -354,5 +364,6 @@ if __name__ == "__main__" :
     # pcr_hitters_normalized(hitters_all, LinearRegression, PCA, np)
     # pcr_pitchers_normalized(pitchers_all, LinearRegression, PCA, np)
     rf_hitters(hitters_all)
+    rf_pitchers(pitchers_all)
     # hitters_visualization(hitters_all, plt, sns)
     # pitchers_visualization(pitchers_all, plt, sns)
