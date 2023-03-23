@@ -342,7 +342,7 @@ def rf_hitters(hitters_all):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state = 42, shuffle=True)
 
     regressor = DecisionTreeRegressor(random_state=0, max_features='sqrt')
-    cross_val_score(regressor, X_train, y_train, cv=10)
+    print(cross_val_score(regressor, X_train, y_train, cv=10))
 
 def rf_pitchers(pitchers_all):
 
@@ -352,7 +352,7 @@ def rf_pitchers(pitchers_all):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state = 42, shuffle=True)
 
     regressor = DecisionTreeRegressor(random_state=0, max_features='sqrt')
-    cross_val_score(regressor, X_train, y_train, cv=10)
+    print(cross_val_score(regressor, X_train, y_train, cv=10))
 
 if __name__ == "__main__" :
     hitters_all = hitters_data_read()
