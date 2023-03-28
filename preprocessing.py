@@ -68,6 +68,92 @@ def pitchers_data_read():
 
 # print(hitters_all.columns)
 # print(pitchers_all.columns)
+
+def hitters_data_read_new():
+
+    # read in custom Fangraphs exports
+
+    H2008 = pd.read_csv("2008 to 2022 Data/H2008.csv")
+    H2009 = pd.read_csv("2008 to 2022 Data/H2009.csv")
+    H2010 = pd.read_csv("2008 to 2022 Data/H2010.csv")
+    H2011 = pd.read_csv("2008 to 2022 Data/H2011.csv")
+    H2012 = pd.read_csv("2008 to 2022 Data/H2012.csv")
+    H2013 = pd.read_csv("2008 to 2022 Data/H2013.csv")
+    H2014 = pd.read_csv("2008 to 2022 Data/H2014.csv")
+    H2015 = pd.read_csv("2008 to 2022 Data/H2015.csv")
+    H2016 = pd.read_csv("2008 to 2022 Data/H2016.csv")
+    H2017 = pd.read_csv("2008 to 2022 Data/H2017.csv")
+    H2018 = pd.read_csv("2008 to 2022 Data/H2018.csv")
+    H2019 = pd.read_csv("2008 to 2022 Data/H2019.csv")
+    H2020 = pd.read_csv("2008 to 2022 Data/H2020.csv")
+    H2021 = pd.read_csv("2008 to 2022 Data/H2021.csv")
+    H2022 = pd.read_csv("2008 to 2022 Data/H2022.csv")
+
+    H1 = H2008.merge(H2009, on='playerid', how='inner')
+    H2 = H2009.merge(H2010, on='playerid', how='inner')
+    H3 = H2010.merge(H2011, on='playerid', how='inner')
+    H4 = H2011.merge(H2012, on='playerid', how='inner')
+    H5 = H2012.merge(H2013, on='playerid', how='inner')
+    H6 = H2013.merge(H2014, on='playerid', how='inner')
+    H7 = H2014.merge(H2015, on='playerid', how='inner')
+    H8 = H2015.merge(H2016, on='playerid', how='inner')
+    H9 = H2016.merge(H2017, on='playerid', how='inner')
+    H10 = H2017.merge(H2018, on='playerid', how='inner')
+    H11 = H2018.merge(H2019, on='playerid', how='inner')
+    H12 = H2019.merge(H2020, on='playerid', how='inner')
+    H13 = H2020.merge(H2021, on='playerid', how='inner')
+    H14 = H2021.merge(H2022, on='playerid', how='inner')
+
+    H_data = pd.concat([H1,H2,H3,H4,H5,H6,H7,H8,H9,H10,H11,H12,H13,H14])
+
+    print(H_data.head(5))
+    print(H_data.describe())
+
+    return H_data
+
+
+def pitchers_data_read_new():
+
+    # read in custom Fangraphs exports
+
+    P2008 = pd.read_csv("2008 to 2022 Data/P2008.csv")
+    P2009 = pd.read_csv("2008 to 2022 Data/P2009.csv")
+    P2010 = pd.read_csv("2008 to 2022 Data/P2010.csv")
+    P2011 = pd.read_csv("2008 to 2022 Data/P2011.csv")
+    P2012 = pd.read_csv("2008 to 2022 Data/P2012.csv")
+    P2013 = pd.read_csv("2008 to 2022 Data/P2013.csv")
+    P2014 = pd.read_csv("2008 to 2022 Data/P2014.csv")
+    P2015 = pd.read_csv("2008 to 2022 Data/P2015.csv")
+    P2016 = pd.read_csv("2008 to 2022 Data/P2016.csv")
+    P2017 = pd.read_csv("2008 to 2022 Data/P2017.csv")
+    P2018 = pd.read_csv("2008 to 2022 Data/P2018.csv")
+    P2019 = pd.read_csv("2008 to 2022 Data/P2019.csv")
+    P2020 = pd.read_csv("2008 to 2022 Data/P2020.csv")
+    P2021 = pd.read_csv("2008 to 2022 Data/P2021.csv")
+    P2022 = pd.read_csv("2008 to 2022 Data/P2022.csv")
+
+    P1 = P2008.merge(P2009, on='playerid', how='inner')
+    P2 = P2009.merge(P2010, on='playerid', how='inner')
+    P3 = P2010.merge(P2011, on='playerid', how='inner')
+    P4 = P2011.merge(P2012, on='playerid', how='inner')
+    P5 = P2012.merge(P2013, on='playerid', how='inner')
+    P6 = P2013.merge(P2014, on='playerid', how='inner')
+    P7 = P2014.merge(P2015, on='playerid', how='inner')
+    P8 = P2015.merge(P2016, on='playerid', how='inner')
+    P9 = P2016.merge(P2017, on='playerid', how='inner')
+    P10 = P2017.merge(P2018, on='playerid', how='inner')
+    P11 = P2018.merge(P2019, on='playerid', how='inner')
+    P12 = P2019.merge(P2020, on='playerid', how='inner')
+    P13 = P2020.merge(P2021, on='playerid', how='inner')
+    P14 = P2021.merge(P2022, on='playerid', how='inner')
+
+    P_data = pd.concat([P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14])
+
+    print(P_data.head(5))
+    print(P_data.describe())
+
+    return P_data
+
 def hitters_preprocessing(hitters_all):
     
     # drop unnecessary columns
@@ -444,15 +530,17 @@ def rf_pitchers(pitchers_all):
     
 
 if __name__ == "__main__" :
-    hitters_all = hitters_data_read()
-    pitchers_all = pitchers_data_read()
-    hitters_all = hitters_preprocessing(hitters_all)
-    pitchers_all = pitchers_preprocessing(pitchers_all)
+    # hitters_all = hitters_data_read()
+    # pitchers_all = pitchers_data_read()
+    # hitters_all = hitters_preprocessing(hitters_all)
+    # pitchers_all = pitchers_preprocessing(pitchers_all)
     # pcr_hitters(hitters_all, Pipeline, LinearRegression, PCA, mean_squared_error, np)
     # pcr_pitchers(pitchers_all, Pipeline, LinearRegression, PCA, mean_squared_error, np)
-    pcr_hitters_normalized(hitters_all, LinearRegression, PCA, np)
-    pcr_pitchers_normalized(pitchers_all, LinearRegression, PCA, np)
-    rf_hitters(hitters_all)
-    rf_pitchers(pitchers_all)
+    # pcr_hitters_normalized(hitters_all, LinearRegression, PCA, np)
+    # pcr_pitchers_normalized(pitchers_all, LinearRegression, PCA, np)
+    # rf_hitters(hitters_all)
+    # rf_pitchers(pitchers_all)
     # hitters_visualization(hitters_all, plt, sns)
     # pitchers_visualization(pitchers_all, plt, sns)
+    H_data = hitters_data_read_new()
+    P_data = pitchers_data_read_new()
