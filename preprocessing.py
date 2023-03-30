@@ -109,8 +109,9 @@ def hitters_data_read_new():
     print(H_data.head(5))
     print(H_data.describe())
 
-    return H_data
+    H_data.to_csv("H_data.csv")
 
+    return H_data
 
 def pitchers_data_read_new():
 
@@ -151,6 +152,80 @@ def pitchers_data_read_new():
 
     print(P_data.head(5))
     print(P_data.describe())
+
+    P_data.to_csv("P_data.csv")
+
+    return P_data
+
+def hitters_preprocessing_new(H_data):
+
+    H_data = H_data.drop(H_data.loc[:, 'playerid':'PA_y'].columns,axis = 1)
+    H_data = H_data.drop(H_data.loc[:, 'BB%_y':'BABIP_y'].columns, axis=1)
+    H_data = H_data.drop(H_data.loc[:, 'OBP_y':'xSLG_y'].columns, axis=1)
+
+    H_data['BB%_x'] = H_data['BB%_x'].str.rstrip("%").astype(float) / 100
+    H_data['K%_x'] = H_data['K%_x'].str.rstrip("%").astype(float) / 100
+    H_data['LD%_x'] = H_data['LD%_x'].str.rstrip("%").astype(float) / 100
+    H_data['GB%_x'] = H_data['GB%_x'].str.rstrip("%").astype(float) / 100
+    H_data['FB%_x'] = H_data['FB%_x'].str.rstrip("%").astype(float) / 100
+    H_data['HR/FB_x'] = H_data['HR/FB_x'].str.rstrip("%").astype(float) / 100
+    H_data['Swing%_x'] = H_data['Swing%_x'].str.rstrip("%").astype(float) / 100
+    H_data['O-Swing%_x'] = H_data['O-Swing%_x'].str.rstrip("%").astype(float) / 100
+    H_data['Z-Swing%_x'] = H_data['Z-Swing%_x'].str.rstrip("%").astype(float) / 100
+    H_data['O-Contact%_x'] = H_data['O-Contact%_x'].str.rstrip("%").astype(float) / 100
+    H_data['Z-Contact%_x'] = H_data['Z-Contact%_x'].str.rstrip("%").astype(float) / 100
+    H_data['SwStr%_x'] = H_data['SwStr%_x'].str.rstrip("%").astype(float) / 100
+    H_data['Barrel%_x'] = H_data['Barrel%_x'].str.rstrip("%").astype(float) / 100
+    H_data['HardHit%_x'] = H_data['HardHit%_x'].str.rstrip("%").astype(float) / 100
+    H_data['CSW%_x'] = H_data['CSW%_x'].str.rstrip("%").astype(float) / 100
+    H_data['IFFB%_x'] = H_data['IFFB%_x'].str.rstrip("%").astype(float) / 100
+    H_data['IFH%_x'] = H_data['IFH%_x'].str.rstrip("%").astype(float) / 100
+    H_data['Contact%_x'] = H_data['Contact%_x'].str.rstrip("%").astype(float) / 100
+    H_data['Zone%_x'] = H_data['Zone%_x'].str.rstrip("%").astype(float) / 100
+
+    H_data.to_csv("H_data.csv")
+
+    return H_data
+
+def pitchers_preprocessing_new(P_data):
+
+    P_data = P_data.drop(P_data.loc[:, 'playerid':'Team_y'].columns, axis=1)
+    P_data = P_data.drop(P_data.loc[:, 'L_y':'L_y'].columns, axis=1)
+    P_data = P_data.drop(P_data.loc[:, 'G_y':'HR/FB_y'].columns, axis=1)
+    P_data = P_data.drop(P_data.loc[:, 'xERA_y':'WP_y'].columns, axis=1)
+    P_data = P_data.drop(P_data.loc[:, 'GB_y':'AVG_y'].columns, axis=1)
+    P_data = P_data.drop(P_data.loc[:, 'BABIP.1_y':'CSW%_y'].columns, axis=1)
+
+    P_data['LOB%_x'] = P_data['LOB%_x'].str.rstrip("%").astype(float) / 100
+    P_data['LD%_x'] = P_data['LD%_x'].str.rstrip("%").astype(float) / 100
+    P_data['GB%_x'] = P_data['GB%_x'].str.rstrip("%").astype(float) / 100
+    P_data['FB%_x'] = P_data['FB%_x'].str.rstrip("%").astype(float) / 100
+    P_data['IFFB%_x'] = P_data['IFFB%_x'].str.rstrip("%").astype(float) / 100
+    P_data['HR/FB_x'] = P_data['HR/FB_x'].str.rstrip("%").astype(float) / 100
+    P_data['FB%.1_x'] = P_data['FB%.1_x'].str.rstrip("%").astype(float) / 100
+    P_data['SL%_x'] = P_data['SL%_x'].str.rstrip("%").astype(float) / 100
+    P_data['CT%_x'] = P_data['CT%_x'].str.rstrip("%").astype(float) / 100
+    P_data['CB%_x'] = P_data['CB%_x'].str.rstrip("%").astype(float) / 100
+    P_data['CH%_x'] = P_data['CH%_x'].str.rstrip("%").astype(float) / 100
+    P_data['SF%_x'] = P_data['SF%_x'].str.rstrip("%").astype(float) / 100
+    P_data['O-Swing%_x'] = P_data['O-Swing%_x'].str.rstrip("%").astype(float) / 100
+    P_data['Z-Swing%_x'] = P_data['Z-Swing%_x'].str.rstrip("%").astype(float) / 100
+    P_data['Swing%_x'] = P_data['Swing%_x'].str.rstrip("%").astype(float) / 100
+    P_data['O-Contact%_x'] = P_data['O-Contact%_x'].str.rstrip("%").astype(float) / 100
+    P_data['Z-Contact%_x'] = P_data['Z-Contact%_x'].str.rstrip("%").astype(float) / 100
+    P_data['Contact%_x'] = P_data['Contact%_x'].str.rstrip("%").astype(float) / 100
+    P_data['Zone%_x'] = P_data['Zone%_x'].str.rstrip("%").astype(float) / 100
+    P_data['SwStr%_x'] = P_data['SwStr%_x'].str.rstrip("%").astype(float) / 100
+    P_data['K%_x'] = P_data['K%_x'].str.rstrip("%").astype(float) / 100
+    P_data['BB%_x'] = P_data['BB%_x'].str.rstrip("%").astype(float) / 100
+    P_data['Barrel%_x'] = P_data['Barrel%_x'].str.rstrip("%").astype(float) / 100
+    P_data['HardHit%_x'] = P_data['HardHit%_x'].str.rstrip("%").astype(float) / 100
+    P_data['CSW%_x'] = P_data['CSW%_x'].str.rstrip("%").astype(float) / 100
+    P_data['LOB%.1_x'] = P_data['LOB%.1_x'].str.rstrip("%").astype(float) / 100
+    P_data['GB%.1_x'] = P_data['GB%.1_x'].str.rstrip("%").astype(float) / 100
+    P_data['HR/FB.1_x'] = P_data['HR/FB.1_x'].str.rstrip("%").astype(float) / 100
+
+    P_data.to_csv("P_data.csv")
 
     return P_data
 
@@ -544,3 +619,5 @@ if __name__ == "__main__" :
     # pitchers_visualization(pitchers_all, plt, sns)
     H_data = hitters_data_read_new()
     P_data = pitchers_data_read_new()
+    H_data = hitters_preprocessing_new(H_data)
+    P_data = pitchers_preprocessing_new(P_data)
