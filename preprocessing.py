@@ -1,4 +1,5 @@
 import pandas as pd
+import sys
 import numpy as np
 import seaborn as sns
 import matplotlib
@@ -14,6 +15,7 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import RepeatedKFold
 matplotlib.use('TkAgg')
+np.set_printoptions(threshold=sys.maxsize)
 
 def hitters_data_read():
 # reading in position player data from Fangraphs custom exports
@@ -183,6 +185,140 @@ def hitters_preprocessing_new(H_data):
     H_data['Contact%_x'] = H_data['Contact%_x'].str.rstrip("%").astype(float) / 100
     H_data['Zone%_x'] = H_data['Zone%_x'].str.rstrip("%").astype(float) / 100
 
+    # Barrel% highly correlated with: HR/FB (r = .835), ISO (r = .816), HR (r = .708)
+    # maxEV highly correlated with: HR/FB (r = .595), HR (r = .541), ISO (r = .524)
+    # xSLG highly correlated with: SLG (r = .841), ISO (r = .811), OPS (r = .803)
+    # LA highly correlated with: GB% (r = -.956), FB% (r = .928)
+    # EV highly correlated with: HR/FB (r = .662), ISO (r = .610), SLG (r = .563)
+    # xBA highly correlated with: AVG (r = .776), wOBA (r = .599), OPS (r = .596)
+    # HardHit% highly correlated with: HR/FB (r = .718), ISO (r = .651), SLG (r = .582)
+    # xwOBA highly correlated with: wOBA (r = .838), OPS (r = .833), SLG (r = .772)
+
+    # filling missing Barrel% with LR
+    df1 = H_data.loc[:, ('Barrel%_x', 'HR/FB_x', 'ISO_x', 'HR_x')]
+    df_test1 = df1[df1['Barrel%_x'].isnull()]
+    df1.dropna(inplace=True)
+    x_train1 = df1.drop('Barrel%_x', axis=1)
+    y_train1 = df1['Barrel%_x']
+    lr = LinearRegression()
+    lr.fit(x_train1,y_train1)
+    x_test1 = df_test1[['HR/FB_x', 'ISO_x', 'HR_x']]
+    Barrel_preds = lr.predict(x_test1)
+    df_test1['Barrel%_x_pred'] = Barrel_preds
+    #print(df_test1.head(10))
+
+    # filling missing maxEV with LR
+    df1 = H_data.loc[:, ('maxEV_x', 'HR/FB_x', 'HR_x', 'ISO_x')]
+    df_test1 = df1[df1['maxEV_x'].isnull()]
+    df1.dropna(inplace=True)
+    x_train1 = df1.drop('maxEV_x', axis=1)
+    y_train1 = df1['maxEV_x']
+    lr = LinearRegression()
+    lr.fit(x_train1, y_train1)
+    x_test1 = df_test1[['HR/FB_x', 'HR_x', 'ISO_x']]
+    maxEV_preds = lr.predict(x_test1)
+    df_test1['maxEV_x_pred'] = maxEV_preds
+    #print(df_test1.head(10))
+
+    # filling missing xSLG with LR
+    df1 = H_data.loc[:, ('xSLG_x', 'SLG_x', 'ISO_x', 'OPS_x')]
+    df_test1 = df1[df1['xSLG_x'].isnull()]
+    df1.dropna(inplace=True)
+    x_train1 = df1.drop('xSLG_x', axis=1)
+    y_train1 = df1['xSLG_x']
+    lr = LinearRegression()
+    lr.fit(x_train1, y_train1)
+    x_test1 = df_test1[['SLG_x', 'ISO_x', 'OPS_x']]
+    xSLG_preds = lr.predict(x_test1)
+    df_test1['xSLG_x_pred'] = xSLG_preds
+    #print(df_test1.head(10))
+
+    # filling missing LA with LR
+    df1 = H_data.loc[:, ('LA_x', 'GB%_x', 'FB%_x')]
+    df_test1 = df1[df1['LA_x'].isnull()]
+    df1.dropna(inplace=True)
+    x_train1 = df1.drop('LA_x', axis=1)
+    y_train1 = df1['LA_x']
+    lr = LinearRegression()
+    lr.fit(x_train1, y_train1)
+    x_test1 = df_test1[['GB%_x', 'FB%_x']]
+    LA_preds = lr.predict(x_test1)
+    df_test1['LA_x_pred'] = LA_preds
+    #print(df_test1.head(10))
+
+    # filling missing EV with LR
+    df1 = H_data.loc[:, ('EV_x', 'HR/FB_x', 'ISO_x', 'SLG_x')]
+    df_test1 = df1[df1['EV_x'].isnull()]
+    df1.dropna(inplace=True)
+    x_train1 = df1.drop('EV_x', axis=1)
+    y_train1 = df1['EV_x']
+    lr = LinearRegression()
+    lr.fit(x_train1, y_train1)
+    x_test1 = df_test1[['HR/FB_x', 'ISO_x', 'SLG_x']]
+    EV_preds = lr.predict(x_test1)
+    df_test1['EV_x_pred'] = EV_preds
+    #print(df_test1.head(10))
+
+    # filling missing xBA with LR
+    df1 = H_data.loc[:, ('xBA_x', 'AVG_x', 'wOBA_x', 'OPS_x')]
+    df_test1 = df1[df1['xBA_x'].isnull()]
+    df1.dropna(inplace=True)
+    x_train1 = df1.drop('xBA_x', axis=1)
+    y_train1 = df1['xBA_x']
+    lr = LinearRegression()
+    lr.fit(x_train1, y_train1)
+    x_test1 = df_test1[['AVG_x', 'wOBA_x', 'OPS_x']]
+    xBA_preds = lr.predict(x_test1)
+    df_test1['xBA_x_pred'] = xBA_preds
+    #print(df_test1.head(10))
+
+    # filling missing HardHit%_x with LR
+    df1 = H_data.loc[:, ('HardHit%_x', 'HR/FB_x', 'ISO_x', 'SLG_x')]
+    df_test1 = df1[df1['HardHit%_x'].isnull()]
+    df1.dropna(inplace=True)
+    x_train1 = df1.drop('HardHit%_x', axis=1)
+    y_train1 = df1['HardHit%_x']
+    lr = LinearRegression()
+    lr.fit(x_train1, y_train1)
+    x_test1 = df_test1[['HR/FB_x', 'ISO_x', 'SLG_x']]
+    HardHit_preds = lr.predict(x_test1)
+    df_test1['HardHit%_x_pred'] = HardHit_preds
+    #print(df_test1.head(10))
+
+    # filling missing xwOBA_x with LR
+    df1 = H_data.loc[:, ('xwOBA_x', 'wOBA_x', 'OPS_x', 'SLG_x')]
+    df_test1 = df1[df1['xwOBA_x'].isnull()]
+    df1.dropna(inplace=True)
+    x_train1 = df1.drop('xwOBA_x', axis=1)
+    y_train1 = df1['xwOBA_x']
+    lr = LinearRegression()
+    lr.fit(x_train1, y_train1)
+    x_test1 = df_test1[['wOBA_x', 'OPS_x', 'SLG_x']]
+    xwOBA_preds = lr.predict(x_test1)
+    df_test1['xwOBA_x_pred'] = xwOBA_preds
+    #print(df_test1.head(10))
+
+    # impute NaNs with LR preds
+    missing = H_data['Barrel%_x'].isna()
+    H_data.loc[missing, "Barrel%_x"] = Barrel_preds
+    missing = H_data['maxEV_x'].isna()
+    H_data.loc[missing, "maxEV_x"] = maxEV_preds
+    missing = H_data['xSLG_x'].isna()
+    H_data.loc[missing, "xSLG_x"] = xSLG_preds
+    missing = H_data['LA_x'].isna()
+    H_data.loc[missing, "LA_x"] = LA_preds
+    missing = H_data['EV_x'].isna()
+    H_data.loc[missing, "EV_x"] = EV_preds
+    missing = H_data['xBA_x'].isna()
+    H_data.loc[missing, "xBA_x"] = xBA_preds
+    missing = H_data['HardHit%_x'].isna()
+    H_data.loc[missing, "HardHit%_x"] = HardHit_preds
+    missing = H_data['xwOBA_x'].isna()
+    H_data.loc[missing, "xwOBA_x"] = xwOBA_preds
+
+    # all other NaNs impute 0
+    H_data.fillna(0, inplace=True)
+
     H_data.to_csv("H_data.csv")
 
     return H_data
@@ -259,6 +395,9 @@ def hitters_preprocessing(hitters_all):
     hitters_all['Barrel%_x'] = hitters_all['Barrel%_x'].str.rstrip("%").astype(float)/100
     hitters_all['HardHit%_x'] = hitters_all['HardHit%_x'].str.rstrip("%").astype(float)/100
     hitters_all['CSW%_x'] = hitters_all['CSW%_x'].str.rstrip("%").astype(float)/100
+
+    # with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+    #     print(hitters_all.corr(numeric_only=True).unstack().sort_values())
 
     print(hitters_all.info())
     
@@ -605,10 +744,10 @@ def rf_pitchers(pitchers_all):
     
 
 if __name__ == "__main__" :
-    # hitters_all = hitters_data_read()
-    # pitchers_all = pitchers_data_read()
-    # hitters_all = hitters_preprocessing(hitters_all)
-    # pitchers_all = pitchers_preprocessing(pitchers_all)
+    hitters_all = hitters_data_read()
+    pitchers_all = pitchers_data_read()
+    hitters_all = hitters_preprocessing(hitters_all)
+    pitchers_all = pitchers_preprocessing(pitchers_all)
     # pcr_hitters(hitters_all, Pipeline, LinearRegression, PCA, mean_squared_error, np)
     # pcr_pitchers(pitchers_all, Pipeline, LinearRegression, PCA, mean_squared_error, np)
     # pcr_hitters_normalized(hitters_all, LinearRegression, PCA, np)
