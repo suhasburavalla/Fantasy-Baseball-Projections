@@ -195,39 +195,7 @@ def MLP_hitters(H_data):
                       'y1_output': tf.keras.metrics.MeanSquaredError(),
                       'y2_output': tf.keras.metrics.MeanSquaredError(),
                   })
-    history = model.fit(X_train, (HR_y_train, R_y_train), epochs=200, batch_size=1024,
-                        validation_data=(X_test, (HR_y_test, R_y_test)))
-
-    # BROKEN
-
-    # input_layer = Input(shape=(len(X_train.columns)))
-    # dense_layer_1 = Dense(units=256, activation="relu")(input_layer)
-    # dense_layer_2 = Dense(units=128, activation="relu")(dense_layer_1)
-    # dense_layer_3 = Dense(units=128, activation="relu")(dense_layer_2)
-    # dense_layer_4 = Dense(units=64, activation="relu")(dense_layer_3)
-    #
-    # y1_output = Dense(units=1, activation="linear", name="y1_output")(dense_layer_2)
-    # y2_output = Dense(units=1, activation="linear", name="y2_output")(dense_layer_3)
-    # y3_output = Dense(units=1, activation="linear", name="y3_output")(dense_layer_4)
-    # y4_output = Dense(units=1, activation="linear", name="y4_output")(dense_layer_4)
-    # y5_output = Dense(units=1, activation="linear", name="y5_output")(dense_layer_4)
-    #
-    # model = Model(inputs=input_layer, outputs=[y1_output, y2_output, y3_output, y4_output, y5_output])
-    #
-    # optimizer = tf.keras.optimizers.SGD(learning_rate=0.001)
-    #
-    # model.compile(optimizer=optimizer,
-    #               loss={'y1_output': 'mse', 'y2_output': 'mse', 'y3_output': 'mse', 'y4_output': 'mse', 'y5_output': 'mse'},
-    #               metrics={
-    #                   'y1_output': tf.keras.metrics.RootMeanSquaredError(),
-    #                   'y2_output': tf.keras.metrics.RootMeanSquaredError(),
-    #                   'y3_output': tf.keras.metrics.RootMeanSquaredError(),
-    #                   'y4_output': tf.keras.metrics.RootMeanSquaredError(),
-    #                   'y5_output': tf.keras.metrics.RootMeanSquaredError(),
-    #               })
-    #
-    # history = model.fit(X_train, (HR_y_train, R_y_train, RBI_y_train, SB_y_train, AVG_y_train), epochs=100, batch_size=10,
-    #                     validation_data=(X_test, (HR_y_test, R_y_test, RBI_y_test, SB_y_test, AVG_y_test)))
+    history = model.fit(X_train, (HR_y_train, R_y_train), epochs=200, batch_size=1024, validation_data=(X_test, (HR_y_test, R_y_test)))
 
     return 0
     
