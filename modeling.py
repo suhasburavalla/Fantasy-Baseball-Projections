@@ -14,22 +14,24 @@ from sklearn.metrics import mean_squared_error
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import RepeatedKFold
+import tensorflow as tf
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import Dense, Input
+from tensorflow.keras.utils import plot_model
+from sklearn.model_selection import train_test_split
+
 matplotlib.use('TkAgg')
 np.set_printoptions(threshold=sys.maxsize)
 
-
-
-
-
-
-
 def hitters_csv_new ():
+
     H_data = pd.read_csv("H_data.csv")
     # print(H_data.head())
     # print(H_data.shape)
     return H_data
 
 def pitchers_csv_new ():
+
     P_data = pd.read_csv("P_data.csv")
     # print(P_data.head())
     # print(P_data.shape)
@@ -93,6 +95,7 @@ def hitters_rf (hitters_all) :
     
 
 def pitchers_rf(pitchers_all):
+
     pitchers_all = pitchers_all.fillna(0.0000000001)
 
     print("\n Random Forest Analysis: Pitchers\n")
@@ -145,8 +148,88 @@ def pitchers_rf(pitchers_all):
     plt.xticks(rotation=90)
     plt.show()
     
+def MLP_hitters(H_data):
 
-    
+    H_data = H_data.iloc[:, 2:]
+    dummies = pd.get_dummies(H_data.Team_x, prefix='Team')
+    H_data = H_data.join(dummies)
+    H_data = H_data.drop(["Team_x"], axis=1)
+
+    print(H_data.head(5))
+    print(H_data.isnull().any().any())
+
+    X_train, X_test = train_test_split(H_data, test_size=0.25)
+
+    # train targets
+    HR_y_train = np.array(X_train["HR_y"])
+    R_y_train = np.array(X_train["R_y"])
+    RBI_y_train = np.array(X_train["RBI_y"])
+    SB_y_train = np.array(X_train["SB_y"])
+    AVG_y_train = np.array(X_train["AVG_y"])
+
+    # test targets
+    HR_y_test = np.array(X_test["HR_y"])
+    R_y_test = np.array(X_test["R_y"])
+    RBI_y_test = np.array(X_test["RBI_y"])
+    SB_y_test = np.array(X_test["SB_y"])
+    AVG_y_test = np.array(X_test["AVG_y"])
+
+    X_train = X_train.drop(["HR_y", "R_y", "RBI_y", "SB_y", "AVG_y"], axis=1)
+    X_test = X_test.drop(["HR_y", "R_y", "RBI_y", "SB_y", "AVG_y"], axis=1)
+
+    input_layer = Input(shape=(len(X_train.columns)))
+    dense_layer_1 = Dense(units=128, activation="relu")(input_layer)
+    dense_layer_2 = Dense(units=128, activation="relu")(dense_layer_1)
+    dense_layer_3 = Dense(units=64, activation="relu")(dense_layer_2)
+
+    y1_output = Dense(units=1, activation="linear", name="y1_output")(dense_layer_2)
+    y2_output = Dense(units=1, activation="linear", name="y2_output")(dense_layer_3)
+
+    model = Model(inputs=input_layer, outputs=[y1_output, y2_output])
+
+    optimizer = tf.keras.optimizers.Adam(learning_rate=0.0001)
+
+    model.compile(optimizer=optimizer,
+                  loss={'y1_output': 'mse', 'y2_output': 'mse'},
+                  metrics={
+                      'y1_output': tf.keras.metrics.MeanSquaredError(),
+                      'y2_output': tf.keras.metrics.MeanSquaredError(),
+                  })
+    history = model.fit(X_train, (HR_y_train, R_y_train), epochs=200, batch_size=1024,
+                        validation_data=(X_test, (HR_y_test, R_y_test)))
+
+    # BROKEN
+
+    # input_layer = Input(shape=(len(X_train.columns)))
+    # dense_layer_1 = Dense(units=256, activation="relu")(input_layer)
+    # dense_layer_2 = Dense(units=128, activation="relu")(dense_layer_1)
+    # dense_layer_3 = Dense(units=128, activation="relu")(dense_layer_2)
+    # dense_layer_4 = Dense(units=64, activation="relu")(dense_layer_3)
+    #
+    # y1_output = Dense(units=1, activation="linear", name="y1_output")(dense_layer_2)
+    # y2_output = Dense(units=1, activation="linear", name="y2_output")(dense_layer_3)
+    # y3_output = Dense(units=1, activation="linear", name="y3_output")(dense_layer_4)
+    # y4_output = Dense(units=1, activation="linear", name="y4_output")(dense_layer_4)
+    # y5_output = Dense(units=1, activation="linear", name="y5_output")(dense_layer_4)
+    #
+    # model = Model(inputs=input_layer, outputs=[y1_output, y2_output, y3_output, y4_output, y5_output])
+    #
+    # optimizer = tf.keras.optimizers.SGD(learning_rate=0.001)
+    #
+    # model.compile(optimizer=optimizer,
+    #               loss={'y1_output': 'mse', 'y2_output': 'mse', 'y3_output': 'mse', 'y4_output': 'mse', 'y5_output': 'mse'},
+    #               metrics={
+    #                   'y1_output': tf.keras.metrics.RootMeanSquaredError(),
+    #                   'y2_output': tf.keras.metrics.RootMeanSquaredError(),
+    #                   'y3_output': tf.keras.metrics.RootMeanSquaredError(),
+    #                   'y4_output': tf.keras.metrics.RootMeanSquaredError(),
+    #                   'y5_output': tf.keras.metrics.RootMeanSquaredError(),
+    #               })
+    #
+    # history = model.fit(X_train, (HR_y_train, R_y_train, RBI_y_train, SB_y_train, AVG_y_train), epochs=100, batch_size=10,
+    #                     validation_data=(X_test, (HR_y_test, R_y_test, RBI_y_test, SB_y_test, AVG_y_test)))
+
+    return 0
     
 if __name__ == "__main__" :
 
@@ -158,7 +241,8 @@ if __name__ == "__main__" :
     H_data = hitters_csv_new()
     P_data = pitchers_csv_new()
     # hitters_rf(H_data)
-    pitchers_rf(P_data)
+    # pitchers_rf(P_data)
+    MLP_hitters(H_data)
     
     
     
