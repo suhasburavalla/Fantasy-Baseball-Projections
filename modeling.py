@@ -179,23 +179,28 @@ def MLP_hitters(H_data):
 
     input_layer = Input(shape=(len(X_train.columns)))
     dense_layer_1 = Dense(units=128, activation="relu")(input_layer)
-    dense_layer_2 = Dense(units=128, activation="relu")(dense_layer_1)
-    dense_layer_3 = Dense(units=64, activation="relu")(dense_layer_2)
+    dense_layer_2 = Dense(units=64, activation="relu")(dense_layer_1)
 
-    y1_output = Dense(units=1, activation="linear", name="y1_output")(dense_layer_2)
-    y2_output = Dense(units=1, activation="linear", name="y2_output")(dense_layer_3)
+    HR_y_output = Dense(units=1, activation="linear", name="HR_y_output")(dense_layer_2)
+    R_y_output = Dense(units=1, activation="linear", name="R_y_output")(dense_layer_2)
+    RBI_y_output = Dense(units=1, activation="linear", name="RBI_y_output")(dense_layer_2)
+    SB_y_output = Dense(units=1, activation="linear", name="SB_y_output")(dense_layer_2)
+    AVG_y_output = Dense(units=1, activation="linear", name="AVG_y_output")(dense_layer_2)
 
-    model = Model(inputs=input_layer, outputs=[y1_output, y2_output])
+    model = Model(inputs=input_layer, outputs=[HR_y_output, R_y_output, RBI_y_output, SB_y_output, AVG_y_output])
 
-    optimizer = tf.keras.optimizers.SGD(learning_rate=0.00001)
+    optimizer = tf.keras.optimizers.Adam(learning_rate=0.00001)
 
     model.compile(optimizer=optimizer,
-                  loss={'y1_output': 'mse', 'y2_output': 'mse'},
+                  loss={'HR_y_output': 'mse', 'R_y_output': 'mse', 'RBI_y_output': 'mse', 'SB_y_output': 'mse', 'AVG_y_output': 'mse'},
                   metrics={
-                      'y1_output': tf.keras.metrics.MeanSquaredError(),
-                      'y2_output': tf.keras.metrics.MeanSquaredError(),
+                      'HR_y_output': tf.keras.metrics.MeanSquaredError(),
+                      'R_y_output': tf.keras.metrics.MeanSquaredError(),
+                      'RBI_y_output': tf.keras.metrics.MeanSquaredError(),
+                      'SB_y_output': tf.keras.metrics.MeanSquaredError(),
+                      'AVG_y_output': tf.keras.metrics.MeanSquaredError(),
                   })
-    history = model.fit(X_train, (HR_y_train, R_y_train), epochs=1000, batch_size=1024, validation_data=(X_test, (HR_y_test, R_y_test)))
+    history = model.fit(X_train, (HR_y_train, R_y_train, RBI_y_train, SB_y_train, AVG_y_train), epochs=500, batch_size=512, validation_data=(X_test, (HR_y_test, R_y_test, RBI_y_test, SB_y_test, AVG_y_test)))
 
     return 0
     
