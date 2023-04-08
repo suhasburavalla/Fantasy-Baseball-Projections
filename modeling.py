@@ -187,7 +187,7 @@ def MLP_hitters(H_data):
 
     model = Model(inputs=input_layer, outputs=[y1_output, y2_output])
 
-    optimizer = tf.keras.optimizers.Adam(learning_rate=0.0001)
+    optimizer = tf.keras.optimizers.SGD(learning_rate=0.00001)
 
     model.compile(optimizer=optimizer,
                   loss={'y1_output': 'mse', 'y2_output': 'mse'},
@@ -195,7 +195,7 @@ def MLP_hitters(H_data):
                       'y1_output': tf.keras.metrics.MeanSquaredError(),
                       'y2_output': tf.keras.metrics.MeanSquaredError(),
                   })
-    history = model.fit(X_train, (HR_y_train, R_y_train), epochs=200, batch_size=1024, validation_data=(X_test, (HR_y_test, R_y_test)))
+    history = model.fit(X_train, (HR_y_train, R_y_train), epochs=1000, batch_size=1024, validation_data=(X_test, (HR_y_test, R_y_test)))
 
     return 0
     
