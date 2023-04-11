@@ -337,6 +337,8 @@ def pitchers_preprocessing_new(P_data):
     P_data = P_data.drop(P_data.loc[:, 'GB_y':'AVG_y'].columns, axis=1)
     P_data = P_data.drop(P_data.loc[:, 'BABIP.1_y':'CSW%_y'].columns, axis=1)
 
+    P_data['SIERA_x'] = P_data['SIERA_x'].fillna(0)
+
     P_data['LOB%_x'] = P_data['LOB%_x'].str.rstrip("%").astype(float) / 100
     P_data['LD%_x'] = P_data['LD%_x'].str.rstrip("%").astype(float) / 100
     P_data['GB%_x'] = P_data['GB%_x'].str.rstrip("%").astype(float) / 100
@@ -365,6 +367,65 @@ def pitchers_preprocessing_new(P_data):
     P_data['LOB%.1_x'] = P_data['LOB%.1_x'].str.rstrip("%").astype(float) / 100
     P_data['GB%.1_x'] = P_data['GB%.1_x'].str.rstrip("%").astype(float) / 100
     P_data['HR/FB.1_x'] = P_data['HR/FB.1_x'].str.rstrip("%").astype(float) / 100
+
+    P_data = P_data.drop(columns=['BABIP.1_x', 'LOB%.1_x', 'GB%.1_x', 'FB%.1_x', 'HR/FB.1_x', 'HardHit%_x'])
+
+    # xERA highly correlated with: FIP (r = .850), SIERA (r = .825), ERA (.773)
+    # Barrel% highly correlated with: HR/9 (r = .692), FB% (r = .489)
+    # maxEV highly correlated with: none, impute with mean instead
+    # LA highly correlated with: FB% (r = .962), GB% (r = -.964)
+    # EV highly correlated with: none, impute with mean instead
+    # HardHit% highly correlated with: none, impute with mean instead
+
+    # filling missing xERA with LR
+    df1 = P_data.loc[:, ('xERA_x', 'FIP_x', 'SIERA_x', 'ERA_x')]
+    df_test1 = df1[df1['xERA_x'].isnull()]
+    df1.dropna(inplace=True)
+    x_train1 = df1.drop('xERA_x', axis=1)
+    y_train1 = df1['xERA_x']
+    lr = LinearRegression()
+    lr.fit(x_train1, y_train1)
+    x_test1 = df_test1[['FIP_x', 'SIERA_x', 'ERA_x']]
+    xERA_preds = lr.predict(x_test1)
+    df_test1['xERA_x_pred'] = xERA_preds
+
+    # filling missing Barrel% with LR
+    df1 = P_data.loc[:, ('Barrel%_x', 'HR/9_x', 'FB%_x')]
+    df_test1 = df1[df1['Barrel%_x'].isnull()]
+    df1.dropna(inplace=True)
+    x_train1 = df1.drop('Barrel%_x', axis=1)
+    y_train1 = df1['Barrel%_x']
+    lr = LinearRegression()
+    lr.fit(x_train1, y_train1)
+    x_test1 = df_test1[['HR/9_x', 'FB%_x']]
+    PBarrel_preds = lr.predict(x_test1)
+    df_test1['Barrel%_x_pred'] = PBarrel_preds
+
+    # filling missing LA with LR
+    df1 = P_data.loc[:, ('LA_x', 'FB%_x', 'GB%_x')]
+    df_test1 = df1[df1['LA_x'].isnull()]
+    df1.dropna(inplace=True)
+    x_train1 = df1.drop('LA_x', axis=1)
+    y_train1 = df1['LA_x']
+    lr = LinearRegression()
+    lr.fit(x_train1, y_train1)
+    x_test1 = df_test1[['FB%_x', 'GB%_x']]
+    PLA_preds = lr.predict(x_test1)
+    df_test1['LA_x_pred'] = PLA_preds
+
+    # impute NaNs with LR preds
+    missing = P_data['xERA_x'].isna()
+    P_data.loc[missing, "xERA_x"] = xERA_preds
+    missing = P_data['Barrel%_x'].isna()
+    P_data.loc[missing, "Barrel%_x"] = PBarrel_preds
+    missing = P_data['LA_x'].isna()
+    P_data.loc[missing, "LA_x"] = PLA_preds
+
+    P_data['maxEV_x'].fillna(int(P_data['maxEV_x'].mean()), inplace=True)
+    P_data['EV_x'].fillna(int(P_data['EV_x'].mean()), inplace=True)
+
+    # all other NaNs impute 0
+    P_data.fillna(0, inplace=True)
 
     P_data.to_csv("P_data.csv")
 
@@ -456,6 +517,8 @@ def pitchers_preprocessing(pitchers_all) :
 
     print(pitchers_all.info())
 
+    # with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+    #     print(pitchers_all.corr(numeric_only=True).unstack().sort_values())
 
     #convert all nan values to mean for pitchers_all
     pitchers_all = pitchers_all.fillna(0.0000000001)
