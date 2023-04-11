@@ -316,6 +316,11 @@ def hitters_preprocessing_new(H_data):
     missing = H_data['xwOBA_x'].isna()
     H_data.loc[missing, "xwOBA_x"] = xwOBA_preds
 
+    # handling outliers
+    H_data.loc[H_data["maxEV_x"] > 125, "maxEV_x"] = 125
+    H_data.loc[H_data["HardHit%_x"] > 1, "HardHit%_x"] = 1
+    H_data.loc[H_data["xwOBA_x"] > 1, "xwOBA_x"] = 1
+
     # all other NaNs impute 0
     H_data.fillna(0, inplace=True)
 
