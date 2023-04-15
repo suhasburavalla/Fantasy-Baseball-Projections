@@ -23,6 +23,11 @@ from sklearn.model_selection import train_test_split
 matplotlib.use('TkAgg')
 np.set_printoptions(threshold=sys.maxsize)
 
+# HYPERPARAMETER DEFINITION
+
+LR = .00001
+EPOCHS = 50000
+
 def hitters_csv_new ():
 
     H_data = pd.read_csv("H_data.csv")
@@ -155,10 +160,10 @@ def MLP_hitters(H_data):
     H_data = H_data.join(dummies)
     H_data = H_data.drop(["Team_x"], axis=1)
 
-    print(H_data.head(5))
-    print(H_data.isnull().any().any())
+    # print(H_data.head(5))
+    # print(H_data.isnull().any().any())
 
-    X_train, X_test = train_test_split(H_data, test_size=0.25)
+    X_train, X_test = train_test_split(H_data, test_size=0.20)
 
     # train targets
     HR_y_train = np.array(X_train["HR_y"])
@@ -189,7 +194,7 @@ def MLP_hitters(H_data):
 
     model = Model(inputs=input_layer, outputs=[HR_y_output, R_y_output, RBI_y_output, SB_y_output, AVG_y_output])
 
-    optimizer = tf.keras.optimizers.Adam(learning_rate=0.00001)
+    optimizer = tf.keras.optimizers.Adam(learning_rate=LR)
 
     model.compile(optimizer=optimizer,
                   loss={'HR_y_output': 'mse', 'R_y_output': 'mse', 'RBI_y_output': 'mse', 'SB_y_output': 'mse', 'AVG_y_output': 'mse'},
@@ -200,7 +205,63 @@ def MLP_hitters(H_data):
                       'SB_y_output': tf.keras.metrics.MeanSquaredError(),
                       'AVG_y_output': tf.keras.metrics.MeanSquaredError(),
                   })
-    history = model.fit(X_train, (HR_y_train, R_y_train, RBI_y_train, SB_y_train, AVG_y_train), epochs=500, batch_size=512, validation_data=(X_test, (HR_y_test, R_y_test, RBI_y_test, SB_y_test, AVG_y_test)))
+    history = model.fit(X_train, (HR_y_train, R_y_train, RBI_y_train, SB_y_train, AVG_y_train), epochs=EPOCHS, batch_size=512, validation_data=(X_test, (HR_y_test, R_y_test, RBI_y_test, SB_y_test, AVG_y_test)))
+
+    return 0
+
+def MLP_pitchers(P_data):
+
+    P_data = P_data.iloc[:, 2:]
+    dummies = pd.get_dummies(P_data.Team_x, prefix='Team')
+    P_data = P_data.join(dummies)
+    P_data = P_data.drop(["Team_x"], axis=1)
+
+    # print(P_data.head(5))
+    # print(P_data.isnull().any().any())
+
+    X_train, X_test = train_test_split(P_data, test_size=0.20)
+
+    # train targets
+    W_y_train = np.array(X_train["W_y"])
+    SV_y_train = np.array(X_train["SV_y"])
+    ERA_y_train = np.array(X_train["ERA_y"])
+    SO_y_train = np.array(X_train["SO_y"])
+    WHIP_y_train = np.array(X_train["WHIP_y"])
+
+    # test targets
+    W_y_test = np.array(X_test["W_y"])
+    SV_y_test = np.array(X_test["SV_y"])
+    ERA_y_test = np.array(X_test["ERA_y"])
+    SO_y_test = np.array(X_test["SO_y"])
+    WHIP_y_test = np.array(X_test["WHIP_y"])
+
+    X_train = X_train.drop(["W_y", "SV_y", "ERA_y", "SO_y", "WHIP_y"], axis=1)
+    X_test = X_test.drop(["W_y", "SV_y", "ERA_y", "SO_y", "WHIP_y"], axis=1)
+
+    input_layer = Input(shape=(len(X_train.columns)))
+    dense_layer_1 = Dense(units=128, activation="relu")(input_layer)
+    dense_layer_2 = Dense(units=64, activation="relu")(dense_layer_1)
+
+    W_y_output = Dense(units=1, activation="linear", name="W_y_output")(dense_layer_2)
+    SV_y_output = Dense(units=1, activation="linear", name="SV_y_output")(dense_layer_2)
+    ERA_y_output = Dense(units=1, activation="linear", name="ERA_y_output")(dense_layer_2)
+    SO_y_output = Dense(units=1, activation="linear", name="SO_y_output")(dense_layer_2)
+    WHIP_y_output = Dense(units=1, activation="linear", name="WHIP_y_output")(dense_layer_2)
+
+    model = Model(inputs=input_layer, outputs=[W_y_output, SV_y_output, ERA_y_output, SO_y_output, WHIP_y_output])
+
+    optimizer = tf.keras.optimizers.Adam(learning_rate=LR)
+
+    model.compile(optimizer=optimizer,
+                  loss={'W_y_output': 'mse', 'SV_y_output': 'mse', 'ERA_y_output': 'mse', 'SO_y_output': 'mse', 'WHIP_y_output': 'mse'},
+                  metrics={
+                      'W_y_output': tf.keras.metrics.MeanSquaredError(),
+                      'SV_y_output': tf.keras.metrics.MeanSquaredError(),
+                      'ERA_y_output': tf.keras.metrics.MeanSquaredError(),
+                      'SO_y_output': tf.keras.metrics.MeanSquaredError(),
+                      'WHIP_y_output': tf.keras.metrics.MeanSquaredError(),
+                  })
+    history = model.fit(X_train, (W_y_train, SV_y_train, ERA_y_train, SO_y_train, WHIP_y_train), epochs=EPOCHS, batch_size=512, validation_data=(X_test, (W_y_test, SV_y_test, ERA_y_test, SO_y_test, WHIP_y_test)))
 
     return 0
     
@@ -216,6 +277,7 @@ if __name__ == "__main__" :
     # hitters_rf(H_data)
     # pitchers_rf(P_data)
     MLP_hitters(H_data)
+    MLP_pitchers(P_data)
     
     
     
