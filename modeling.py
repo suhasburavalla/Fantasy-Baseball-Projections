@@ -26,7 +26,7 @@ np.set_printoptions(threshold=sys.maxsize)
 # HYPERPARAMETER DEFINITION
 
 LR = .00001
-EPOCHS = 50000
+EPOCHS = 10000
 
 def hitters_csv_new ():
 
