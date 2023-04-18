@@ -264,6 +264,37 @@ def MLP_pitchers(P_data):
     history = model.fit(X_train, (W_y_train, SV_y_train, ERA_y_train, SO_y_train, WHIP_y_train), epochs=EPOCHS, batch_size=512, validation_data=(X_test, (W_y_test, SV_y_test, ERA_y_test, SO_y_test, WHIP_y_test)))
 
     return 0
+
+def get_model_results(H_data, P_data):
+
+    # Naive model: previous year's performance is predicted performance
+    # We need to outperform these metrics
+
+    naive_MSE_HR = mean_squared_error(H_data['HR_x'], H_data['HR_y'])
+    naive_MSE_R = mean_squared_error(H_data['R_x'], H_data['R_y'])
+    naive_MSE_RBI = mean_squared_error(H_data['RBI_x'], H_data['RBI_y'])
+    naive_MSE_SB = mean_squared_error(H_data['SB_x'], H_data['SB_y'])
+    naive_MSE_AVG = mean_squared_error(H_data['AVG_x'], H_data['AVG_y'])
+
+    naive_MSE_W = mean_squared_error(P_data['W_x'], P_data['W_y'])
+    naive_MSE_SV = mean_squared_error(P_data['SV_x'], P_data['SV_y'])
+    naive_MSE_ERA = mean_squared_error(P_data['ERA_x'], P_data['ERA_y'])
+    naive_MSE_SO = mean_squared_error(P_data['SO_x'], P_data['SO_y'])
+    naive_MSE_WHIP = mean_squared_error(P_data['WHIP_x'], P_data['WHIP_y'])
+
+    print("MSE for Naive model - HR: ", naive_MSE_HR)
+    print("MSE for Naive model - R: ", naive_MSE_R)
+    print("MSE for Naive model - RBI: ", naive_MSE_RBI)
+    print("MSE for Naive model - SB: ", naive_MSE_SB)
+    print("MSE for Naive model - AVG: ", naive_MSE_AVG)
+
+    print("MSE for Naive model - W: ", naive_MSE_W)
+    print("MSE for Naive model - SV: ", naive_MSE_SV)
+    print("MSE for Naive model - ERA: ", naive_MSE_ERA)
+    print("MSE for Naive model - SO: ", naive_MSE_SO)
+    print("MSE for Naive model - WHIP: ", naive_MSE_WHIP)
+
+    return 0
     
 if __name__ == "__main__" :
 
@@ -276,8 +307,9 @@ if __name__ == "__main__" :
     P_data = pitchers_csv_new()
     # hitters_rf(H_data)
     # pitchers_rf(P_data)
-    MLP_hitters(H_data)
-    MLP_pitchers(P_data)
+    # MLP_hitters(H_data)
+    # MLP_pitchers(P_data)
+    get_model_results(H_data, P_data)
     
     
     
