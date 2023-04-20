@@ -26,7 +26,7 @@ np.set_printoptions(threshold=sys.maxsize)
 # HYPERPARAMETER DEFINITION
 
 LR = .00001
-EPOCHS = 10000
+EPOCHS = 1000
 
 def hitters_csv_new ():
 
@@ -42,15 +42,22 @@ def pitchers_csv_new ():
     # print(P_data.shape)
     return P_data
 
-def hitters_rf (hitters_all) :
-    
-    hitters_all = hitters_all.fillna(0.0000000001)
+def RF_hitters(H_data):
+
+    H_data = H_data.iloc[:, 2:]
+    dummies = pd.get_dummies(H_data.Team_x, prefix='Team')
+    H_data = H_data.join(dummies)
+    H_data = H_data.drop(["Team_x"], axis=1)
+
+    H_data = (H_data - H_data.mean()) / H_data.std()
+
+    # print(H_data.columns.values.tolist())
     
     print("\n Random Forest Analysis: Hitters\n")
 
-    X = hitters_all.iloc[:, 3:55].values
-    y = hitters_all.iloc[:, 55:60].values
-    col_names = hitters_all.columns[3:55].tolist()
+    X = H_data.iloc[:, ~52:56].values
+    y = H_data.iloc[:, 52:56].values
+    col_names = H_data.columns[~52:56].tolist()
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state = 42, shuffle=True)
 
@@ -58,20 +65,20 @@ def hitters_rf (hitters_all) :
     regressor.fit(X_train, y_train)
     print("10-fold CV score, RF model for Hitters:")
     print(cross_val_score(regressor, X_train, y_train, cv=10))
-    
+
     # Get feature importances
     importances = regressor.feature_importances_
 
- 
+
     feature_dict = {i: col_names[i] for i in range(len(col_names))}
     # features = ["Feature " + str(i) for i in range(X.shape[1])]
-    
+
     # Sort feature importances in descending order
     indices = np.argsort(importances)[::-1]
 
     # Rearrange feature names so they match the sorted feature importances
     # sorted_features = []
-  
+
     # for i in indices:
     #     sorted_features.append(feature_dict[i])
 
@@ -82,7 +89,7 @@ def hitters_rf (hitters_all) :
     # plt.xticks(rotation=90)
     # print(feature_dict)
     # plt.show()
-    
+
     # Get the top 10 important features
     top_k = 10
     sorted_features = [feature_dict[i] for i in indices[:top_k]]
@@ -96,17 +103,24 @@ def hitters_rf (hitters_all) :
     plt.bar(sorted_features, importances_top_k)
     plt.xticks(rotation=90)
     plt.show()
-    
-    
 
-def pitchers_rf(pitchers_all):
+def RF_pitchers(P_data):
 
-    pitchers_all = pitchers_all.fillna(0.0000000001)
+    P_data = P_data.iloc[:, 2:]
+    dummies = pd.get_dummies(P_data.Team_x, prefix='Team')
+    P_data = P_data.join(dummies)
+    P_data = P_data.drop(["Team_x"], axis=1)
+
+    P_data = (P_data - P_data.mean()) / P_data.std()
+
+    # print(P_data.columns.values.tolist())
+    # print(P_data.head(5))
 
     print("\n Random Forest Analysis: Pitchers\n")
-    X = pitchers_all.iloc[:, 3:67].values
-    y = pitchers_all.iloc[:, 67:72].values
-    col_names = pitchers_all.columns[3:67].tolist()
+
+    X = P_data.iloc[:, ~58:62].values
+    y = P_data.iloc[:, 58:62].values
+    col_names = P_data.columns[~58:62].tolist()
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state = 42, shuffle=True)
 
@@ -114,20 +128,20 @@ def pitchers_rf(pitchers_all):
     regressor.fit(X_train, y_train)
     print("10-fold CV score, RF model for Pitchers:")
     print(cross_val_score(regressor, X_train, y_train, cv=10))
-    
+
     # Get feature importances
     importances = regressor.feature_importances_
 
- 
+
     feature_dict = {i: col_names[i] for i in range(len(col_names))}
     # features = ["Feature " + str(i) for i in range(X.shape[1])]
-    
+
     # Sort feature importances in descending order
     indices = np.argsort(importances)[::-1]
 
     # Rearrange feature names so they match the sorted feature importances
     # sorted_features = []
-  
+
     # for i in indices:
     #     sorted_features.append(feature_dict[i])
 
@@ -138,7 +152,7 @@ def pitchers_rf(pitchers_all):
     # plt.xticks(rotation=90)
     # print(feature_dict)
     # plt.show()
-    
+
     # Get the top 10 important features
     top_k = 10
     sorted_features = [feature_dict[i] for i in indices[:top_k]]
@@ -159,6 +173,8 @@ def MLP_hitters(H_data):
     dummies = pd.get_dummies(H_data.Team_x, prefix='Team')
     H_data = H_data.join(dummies)
     H_data = H_data.drop(["Team_x"], axis=1)
+
+    H_data = (H_data - H_data.mean()) / H_data.std()
 
     # print(H_data.head(5))
     # print(H_data.isnull().any().any())
@@ -216,6 +232,8 @@ def MLP_pitchers(P_data):
     P_data = P_data.join(dummies)
     P_data = P_data.drop(["Team_x"], axis=1)
 
+    P_data = (P_data - P_data.mean()) / P_data.std()
+
     # print(P_data.head(5))
     # print(P_data.isnull().any().any())
 
@@ -270,6 +288,9 @@ def get_model_results(H_data, P_data):
     # Naive model: previous year's performance is predicted performance
     # We need to outperform these metrics
 
+    H_data = (H_data - H_data.mean(numeric_only=True)) / H_data.std(numeric_only=True)
+    P_data = (P_data - P_data.mean(numeric_only=True)) / P_data.std(numeric_only=True)
+
     naive_MSE_HR = mean_squared_error(H_data['HR_x'], H_data['HR_y'])
     naive_MSE_R = mean_squared_error(H_data['R_x'], H_data['R_y'])
     naive_MSE_RBI = mean_squared_error(H_data['RBI_x'], H_data['RBI_y'])
@@ -298,17 +319,12 @@ def get_model_results(H_data, P_data):
     
 if __name__ == "__main__" :
 
-    # H_data = hitters_data_read_new()
-    # P_data = pitchers_data_read_new()
-    # H_data = hitters_preprocessing_new(H_data)
-    # P_data = pitchers_preprocessing_new(P_data)
-    
     H_data = hitters_csv_new()
     P_data = pitchers_csv_new()
-    # hitters_rf(H_data)
-    # pitchers_rf(P_data)
-    # MLP_hitters(H_data)
-    # MLP_pitchers(P_data)
+    RF_hitters(H_data)
+    RF_pitchers(P_data)
+    MLP_hitters(H_data)
+    MLP_pitchers(P_data)
     get_model_results(H_data, P_data)
     
     
