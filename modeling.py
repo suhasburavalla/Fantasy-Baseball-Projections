@@ -221,9 +221,15 @@ def MLP_hitters(H_data):
                       'SB_y_output': tf.keras.metrics.MeanSquaredError(),
                       'AVG_y_output': tf.keras.metrics.MeanSquaredError(),
                   })
-    history = model.fit(X_train, (HR_y_train, R_y_train, RBI_y_train, SB_y_train, AVG_y_train), epochs=EPOCHS, batch_size=512, validation_data=(X_test, (HR_y_test, R_y_test, RBI_y_test, SB_y_test, AVG_y_test)))
 
-    return 0
+    model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(filepath='./tmp/checkpointH', save_weights_only=True,
+                                                                   monitor='val_loss', mode='max', save_best_only=True)
+
+    history_H = model.fit(X_train, (HR_y_train, R_y_train, RBI_y_train, SB_y_train, AVG_y_train), epochs=EPOCHS, batch_size=512, validation_data=(X_test, (HR_y_test, R_y_test, RBI_y_test, SB_y_test, AVG_y_test)), callbacks=[model_checkpoint_callback])
+
+    model.load_weights('./tmp/checkpointH')
+
+    return history_H
 
 def MLP_pitchers(P_data):
 
@@ -279,11 +285,17 @@ def MLP_pitchers(P_data):
                       'SO_y_output': tf.keras.metrics.MeanSquaredError(),
                       'WHIP_y_output': tf.keras.metrics.MeanSquaredError(),
                   })
-    history = model.fit(X_train, (W_y_train, SV_y_train, ERA_y_train, SO_y_train, WHIP_y_train), epochs=EPOCHS, batch_size=512, validation_data=(X_test, (W_y_test, SV_y_test, ERA_y_test, SO_y_test, WHIP_y_test)))
 
-    return 0
+    model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(filepath='./tmp/checkpointP', save_weights_only=True,
+                                                                   monitor='val_loss', mode='max', save_best_only=True)
 
-def get_model_results(H_data, P_data):
+    history_P = model.fit(X_train, (W_y_train, SV_y_train, ERA_y_train, SO_y_train, WHIP_y_train), epochs=EPOCHS, batch_size=512, validation_data=(X_test, (W_y_test, SV_y_test, ERA_y_test, SO_y_test, WHIP_y_test)), callbacks=[model_checkpoint_callback])
+
+    model.load_weights('./tmp/checkpointP')
+
+    return history_P
+
+def get_model_results(H_data, P_data, history_H, history_P):
 
     # Naive model: previous year's performance is predicted performance
     # We need to outperform these metrics
@@ -321,11 +333,11 @@ if __name__ == "__main__" :
 
     H_data = hitters_csv_new()
     P_data = pitchers_csv_new()
-    RF_hitters(H_data)
-    RF_pitchers(P_data)
-    MLP_hitters(H_data)
-    MLP_pitchers(P_data)
-    get_model_results(H_data, P_data)
+    # RF_hitters(H_data)
+    # RF_pitchers(P_data)
+    history_H = MLP_hitters(H_data)
+    history_P = MLP_pitchers(P_data)
+    get_model_results(H_data, P_data, history_H, history_P)
     
     
     
