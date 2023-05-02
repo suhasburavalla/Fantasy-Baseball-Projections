@@ -333,8 +333,8 @@ if __name__ == "__main__" :
 
     H_data = hitters_csv_new()
     P_data = pitchers_csv_new()
-    # RF_hitters(H_data)
-    # RF_pitchers(P_data)
+    RF_hitters(H_data)
+    RF_pitchers(P_data)
     history_H = MLP_hitters(H_data)
     history_P = MLP_pitchers(P_data)
     get_model_results(H_data, P_data, history_H, history_P)
