@@ -51,13 +51,17 @@ def RF_hitters(H_data):
 
     H_data = (H_data - H_data.mean()) / H_data.std()
 
-    # print(H_data.columns.values.tolist())
-    
-    print("\n Random Forest Analysis: Hitters\n")
+    print(H_data.columns)
 
-    X = H_data.iloc[:, ~52:56].values
-    y = H_data.iloc[:, 52:56].values
-    col_names = H_data.columns[~52:56].tolist()
+    X = H_data.drop(["HR_y", "R_y", "RBI_y", "SB_y", "AVG_y"], axis=1)
+    y = H_data[["HR_y", "R_y", "RBI_y", "SB_y", "AVG_y"]]
+
+    col_names = X.columns.tolist()
+
+    X = X.values
+    y = y.values
+
+    print("\n Random Forest Analysis: Hitters\n")
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state = 42, shuffle=True)
 
@@ -113,14 +117,15 @@ def RF_pitchers(P_data):
 
     P_data = (P_data - P_data.mean()) / P_data.std()
 
-    # print(P_data.columns.values.tolist())
-    # print(P_data.head(5))
+    X = P_data.drop(["W_y", "SV_y", "ERA_y", "SO_y", "WHIP_y"], axis=1)
+    y = P_data[["W_y", "SV_y", "ERA_y", "SO_y", "WHIP_y"]]
+
+    col_names = X.columns.tolist()
+
+    X = X.values
+    y = y.values
 
     print("\n Random Forest Analysis: Pitchers\n")
-
-    X = P_data.iloc[:, ~58:62].values
-    y = P_data.iloc[:, 58:62].values
-    col_names = P_data.columns[~58:62].tolist()
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state = 42, shuffle=True)
 
