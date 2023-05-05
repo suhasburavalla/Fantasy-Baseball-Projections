@@ -63,7 +63,7 @@ def RF_hitters(H_data):
 
     print("\n Random Forest Analysis: Hitters\n")
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state = 42, shuffle=True)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state = 42, shuffle=False)
 
     regressor = DecisionTreeRegressor(random_state=0, max_features='sqrt')
     regressor.fit(X_train, y_train)
@@ -73,6 +73,19 @@ def RF_hitters(H_data):
     # Get feature importances
     importances = regressor.feature_importances_
 
+    y_hat = regressor.predict(X_test)
+
+    HR_y_hat = y_hat[0: ,0]
+    R_y_hat = y_hat[0:,1]
+    RBI_y_hat = y_hat[0:,2]
+    SB_y_hat = y_hat[0:,3]
+    AVG_y_hat = y_hat[0:,4]
+
+    print("MSE HR_y: ", mean_squared_error(HR_y_hat, y_test[0: ,0]))
+    print("MSE R_y: ", mean_squared_error(R_y_hat, y_test[0:,1]))
+    print("MSE RBI_y: ", mean_squared_error(RBI_y_hat, y_test[0:,2]))
+    print("MSE SB_y: ", mean_squared_error(SB_y_hat, y_test[0:,3]))
+    print("MSE AVG_y: ", mean_squared_error(AVG_y_hat, y_test[0:,4]))
 
     feature_dict = {i: col_names[i] for i in range(len(col_names))}
     # features = ["Feature " + str(i) for i in range(X.shape[1])]
@@ -127,7 +140,7 @@ def RF_pitchers(P_data):
 
     print("\n Random Forest Analysis: Pitchers\n")
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state = 42, shuffle=True)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state = 42, shuffle=False)
 
     regressor = DecisionTreeRegressor(random_state=0, max_features='sqrt')
     regressor.fit(X_train, y_train)
@@ -137,6 +150,19 @@ def RF_pitchers(P_data):
     # Get feature importances
     importances = regressor.feature_importances_
 
+    y_hat = regressor.predict(X_test)
+
+    W_y_hat = y_hat[0:, 0]
+    SV_y_hat = y_hat[0:, 1]
+    ERA_y_hat = y_hat[0:, 2]
+    SO_y_hat = y_hat[0:, 3]
+    WHIP_y_hat = y_hat[0:, 4]
+
+    print("MSE W_y: ", mean_squared_error(W_y_hat, y_test[0:, 0]))
+    print("MSE SV_y: ", mean_squared_error(SV_y_hat, y_test[0:, 1]))
+    print("MSE ERA_y: ", mean_squared_error(ERA_y_hat, y_test[0:, 2]))
+    print("MSE SO_y: ", mean_squared_error(SO_y_hat, y_test[0:, 3]))
+    print("MSE WHIP_y: ", mean_squared_error(WHIP_y_hat, y_test[0:, 4]))
 
     feature_dict = {i: col_names[i] for i in range(len(col_names))}
     # features = ["Feature " + str(i) for i in range(X.shape[1])]
@@ -340,9 +366,9 @@ if __name__ == "__main__" :
     P_data = pitchers_csv_new()
     RF_hitters(H_data)
     RF_pitchers(P_data)
-    history_H = MLP_hitters(H_data)
-    history_P = MLP_pitchers(P_data)
-    get_model_results(H_data, P_data, history_H, history_P)
+    # history_H = MLP_hitters(H_data)
+    # history_P = MLP_pitchers(P_data)
+    # get_model_results(H_data, P_data, history_H, history_P)
     
     
     
